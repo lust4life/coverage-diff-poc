@@ -1,6 +1,6 @@
 <project version="4">
     <component name="ScalaCompilerConfiguration">
-        <profile name="mill 1" modules="poc">
+        <profile name="mill 1" modules="poc,poc.test">
             <parameters> </parameters>
             <plugins> </plugins>
         </profile>
