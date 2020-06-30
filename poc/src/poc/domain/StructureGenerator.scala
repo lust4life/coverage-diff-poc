@@ -2,8 +2,16 @@ package poc.domain
 
 import java.io.InputStream
 
-import scala.util.Try
-
 trait StructureGenerator {
-  def parse(in: InputStream, filePath: String): Try[Seq[CodeBlock]]
+  import ParseResult._
+
+  def parse(in: InputStream, filePath: String): Either[Error, Success]
+}
+
+object ParseResult {
+
+  final case class Success(filePath: String, result: Seq[CodeBlock])
+
+  final case class Error(filePath: String, reason: String)
+
 }
