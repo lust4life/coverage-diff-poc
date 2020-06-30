@@ -3,7 +3,7 @@ import java.util.Optional
 
 import com.github.javaparser.Range
 import com.github.javaparser.ast.body.{ClassOrInterfaceDeclaration, MethodDeclaration}
-import poc.domain.BlockRange
+import poc.domain.{BlockRange, ClassOrInterface, Method}
 
 object Implicits extends Implicits
 
@@ -14,31 +14,40 @@ trait Implicits {
   }
 
   implicit class ShortcutForClassOrInterface(self: ClassOrInterfaceDeclaration) {
-    def fullyQualifiedName = {
+    private def getFullyQualifiedNameOrThrow(filePath: String) = {
       self.getFullyQualifiedName.orElseThrow(() => {
-        throw new Exception(s"${self.getNameAsString}'s fully qualified name is empty")
+        throw new Exception(s"${filePath} => ${self.getNameAsString}'s fully qualified name is empty")
       })
     }
 
-    def getRangeOrThrow(implicit filePath: String) = {
+    private def getRangeOrThrow(filePath: String) = {
       self.getRange.orElseThrow(() => {
         throw new Exception(s"${filePath} => ${self.getFullyQualifiedName} doesn't have range info")
       })
     }
-  }
 
-  implicit class ShortcutForMethod(self: MethodDeclaration) {
-    def getRangeOrThrow(implicit filePath: String) = {
-      self.getRange.orElseThrow(() => {
-        throw new Exception(s"${filePath} => ${self.getDeclarationAsString()} doesn't have range info")
-      })
-    }
-
-    def getContainerOrThrow(implicit filePath: String) ={
-      self.findAncestor(classOf[ClassOrInterfaceDeclaration]).orElseThrow(() => {
-        throw new Exception(s"${filePath} => ${self.getDeclarationAsString()} method could not find its class or interface")
-      })
+    def getClassOrInterfaceBlockOrThrow(filePath: String) ={
+      ClassOrInterface(filePath, getRangeOrThrow(filePath), getFullyQualifiedNameOrThrow(filePath))
     }
   }
 
+  implicit class ShortcutForMethod(method: MethodDeclaration) {
+    private def getRangeOrThrow(filePath: String) = {
+      method.getRange.orElseThrow(() => {
+        throw new Exception(s"${filePath} => ${method.getDeclarationAsString()} doesn't have range info")
+      })
+    }
+
+    private def getContainerOrThrow(filePath: String) ={
+      method.findAncestor(classOf[ClassOrInterfaceDeclaration]).orElseThrow(() => {
+        throw new Exception(s"${filePath} => ${method.getDeclarationAsString()} method could not find its class or interface")
+      })
+    }
+
+    def getMethodBlockOrThrow(filePath: String) ={
+      val signature = method.getDeclarationAsString(false, false, false)
+      val container = getContainerOrThrow(filePath).getClassOrInterfaceBlockOrThrow(filePath)
+      Method(container, signature, getRangeOrThrow(filePath))
+    }
+  }
 }

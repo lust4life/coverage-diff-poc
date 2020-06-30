@@ -19,16 +19,11 @@ class JavaGenerator(parser: JavaParser) extends StructureGenerator {
     Try {
       val parseRes = parser.parse(in)
       if (parseRes.isSuccessful) {
-        val codeBlocks = parseRes.getResult.get.findAll(classOf[MethodDeclaration]).stream()
-          .map(method => {
-            implicit val s = filePath
-            val signature = method.getDeclarationAsString(false, false, false)
-            val classOrInterface = method.getContainerOrThrow
-            val container = ClassOrInterface(filePath, classOrInterface.getRangeOrThrow, classOrInterface.fullyQualifiedName)
-            Method(container, signature, method.getRangeOrThrow)
-          }).toScala(Seq)
-
-        codeBlocks
+        parseRes.getResult.get
+          .findAll(classOf[MethodDeclaration])
+          .stream()
+          .map(method => method.getMethodBlockOrThrow(filePath))
+          .toScala(Seq)
       } else {
         val error = parseRes.getProblems.asScala
           .headOption.map(x => x.getMessage)
