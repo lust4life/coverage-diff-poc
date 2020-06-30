@@ -1,6 +1,8 @@
 package poc.domain
 
-final case class BlockRange(begin: Int, end: Int)
+final case class BlockRange(begin: Int, end: Int){
+  require(begin <= end, "begin should <= end")
+}
 
 sealed trait CodeBlock {
   def id: String
@@ -15,7 +17,7 @@ final case class ClassOrInterface(filePath: String, range: BlockRange, fullQuali
 
 final case class Method(container: ClassOrInterface, signature: String, range: BlockRange) extends CodeBlock {
   override def id = {
-    container.id + "\b$\b" + signature
+    container.id + "\t#\t" + signature
   }
 
   override def filePath = container.filePath

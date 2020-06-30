@@ -1,0 +1,65 @@
+diff --git a/src/main/java/com/poc/Bar.java b/src/main/java/com/poc/Bar.java
+index b7afe81..b98b7d9 100644
+--- a/src/main/java/com/poc/Bar.java
++++ b/src/main/java/com/poc/Bar.java
+@@ -5 +5 @@ public class Bar {
+-    public void FunNoCoverage(){
++    public void FunNoCoverage(String test){
+@@ -9 +9 @@ public class Bar {
+-    public void FunNoCoverage1(){
++    public void FunNoCoverage1(long test){
+@@ -13 +13 @@ public class Bar {
+-    public void FunNoCoverage2(){
++    public Foo FunNoCoverage2(int a, String b, boolean c, Bar d){
+@@ -14,0 +15,6 @@ public class Bar {
++        return null;
++    }
++
++    public Foo FunNoCoverage2(int a, boolean b){
++        System.out.println("2");
++        return null;
+@@ -23 +29,10 @@ public class Bar {
+-        return 2 * num;
++        return InnerBar.DoubleNumber(num);
++    }
++
++    /**
++     * InnerBar
++     */
++    public static class InnerBar {
++        public static int DoubleNumber(int num) {
++            return 2 * num;
++        }
+diff --git a/src/main/java/com/poc/Foo.java b/src/main/java/com/poc/Foo.java
+index c3bc054..1e86c4f 100644
+--- a/src/main/java/com/poc/Foo.java
++++ b/src/main/java/com/poc/Foo.java
+@@ -12 +12 @@ public class Foo {
+-        if (num > 5) {
++        if (num > 6) {
+@@ -21,0 +22,8 @@ public class Foo {
++
++    public void Parse(String file) {
++        try {
++            System.out.println(file);
++        } catch (Exception e) {
++            System.out.println(file + " not found.");
++        }
++    }
+diff --git a/src/test/java/FooTest.java b/src/test/java/FooTest.java
+index abc4e40..9401399 100644
+--- a/src/test/java/FooTest.java
++++ b/src/test/java/FooTest.java
+@@ -12,2 +12,2 @@ class FooTest {
+-        // var double10 = aClass.DoubleNumberIfMoreThen5(10);
+-        // assertEquals(200, double10);
++        var double10 = foo.DoubleNumberIfMoreThen5(10);
++        assertEquals(20, double10);
+@@ -17,0 +18,7 @@ class FooTest {
++
++
++    @Test
++    void parse(){
++        var foo = new Foo();
++        foo.Parse("/Users/jiajun.qian/git/jacoco/poc/a.diff");
++    }
