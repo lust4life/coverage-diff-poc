@@ -1,8 +1,8 @@
-package poc.domain
+package poc.codeBlock
 
 import utest._
 
-object DiffParserTest extends TestSuite{
+object CodeBlockTest extends TestSuite{
 
   val tests = Tests {
     val dummyRange =BlockRange(1,1)

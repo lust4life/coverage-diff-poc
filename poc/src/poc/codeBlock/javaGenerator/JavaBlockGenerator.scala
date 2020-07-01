@@ -1,22 +1,22 @@
-package poc.javaParser
+package poc.codeBlock
+package javaGenerator
 
 import java.io.InputStream
 
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.body.MethodDeclaration
-import poc.domain._
-import poc.javaParser.Implicits._
-import poc.domain.StructureGenerator._
+import poc.codeBlock.CodeBlockGenerator._
+import poc.codeBlock.javaGenerator.Implicits._
 
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters._
 
 
-class JavaGenerator(parser: JavaParser) extends StructureGenerator {
+class JavaBlockGenerator(parser: JavaParser) extends CodeBlockGenerator {
 
   def this() = this(new JavaParser())
 
-  override def parse(in: InputStream, filePath: String): Either[Error, Success] = {
+  override def generate(in: InputStream, filePath: String): Either[Error, Success] = {
     try {
       val parseRes = parser.parse(in)
       if (parseRes.isSuccessful) {

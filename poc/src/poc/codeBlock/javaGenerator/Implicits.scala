@@ -1,8 +1,8 @@
-package poc.javaParser
+package poc.codeBlock
+package javaGenerator
 
 import com.github.javaparser.Range
 import com.github.javaparser.ast.body.{ClassOrInterfaceDeclaration, MethodDeclaration}
-import poc.domain.{BlockRange, ClassOrInterface, Method}
 
 object Implicits extends Implicits
 

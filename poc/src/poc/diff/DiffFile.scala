@@ -1,8 +1,6 @@
-package poc.domain
+package poc.diff
 
-import java.io.InputStream
-
-sealed trait DiffFile{
+sealed trait DiffFile {
   def language: String
 
   def isJava = "java".equalsIgnoreCase(language)
@@ -15,12 +13,3 @@ final case class Deleted(filePath: String, language: String) extends DiffFile
 final case class Changed(filePath: String, language: String, changedLines: Set[Double]) extends DiffFile
 
 final case class Rename(from: String, to: String, language: String, changedLines: Set[Double]) extends DiffFile
-
-trait DiffGenerator {
-  /**
-   * 解析 diff，生成 diff-result
-   *
-   * @return
-   */
-  def parse(in: InputStream): Seq[DiffFile]
-}

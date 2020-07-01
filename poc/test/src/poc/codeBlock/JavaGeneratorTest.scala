@@ -1,19 +1,19 @@
-package poc.javaParser
+package poc.codeBlock
 
 import java.io.{File, FileInputStream}
 
-import poc.domain.StructureGenerator._
-import poc.domain.{BlockRange, ClassOrInterface, Method}
+import poc.codeBlock.CodeBlockGenerator.Error
+import poc.codeBlock.javaGenerator.JavaBlockGenerator
 import utest._
 
 object JavaGeneratorTest extends TestSuite {
-  val generator = new JavaGenerator()
+  val generator = new JavaBlockGenerator()
 
   val tests = Tests {
     "invalid file should failed" - {
       val file = new File("poc/test/resources/Invalid.java")
       val filePath = file.getAbsolutePath
-      val res = generator.parse(new FileInputStream(file), filePath)
+      val res = generator.generate(new FileInputStream(file), filePath)
 
       assertMatch(res) {
         case Left(Error(`filePath`, _)) =>
@@ -23,7 +23,7 @@ object JavaGeneratorTest extends TestSuite {
     'testParse - {
       val file = new File("poc/test/resources/MockJavaData.java")
       val filePath = file.getAbsolutePath
-      val res = generator.parse(new FileInputStream(file), filePath)
+      val res = generator.generate(new FileInputStream(file), filePath)
 
       assert(res.isRight)
 

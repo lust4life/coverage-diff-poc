@@ -1,20 +1,20 @@
-package poc.diffParser
+package poc.diff
 
 import java.nio.file.{Files, Paths}
 
-import poc.domain.{Changed, Rename}
+import poc.diff.jsonGenerator.DiffJsonParser
 import utest._
 
 import scala.collection.Set
 
-object DiffParserTest extends TestSuite {
-  val diffParser = new DiffParser
+object DiffJsonParserTest extends TestSuite {
+  val diffParser = new DiffJsonParser
 
   val tests = Tests {
 
     "parse diff json file" - {
       val in = Files.newInputStream(Paths.get("poc/test/resources/diff.json"))
-      val res = diffParser.parse(in)
+      val res = diffParser.generate(in)
 
       val resLen = res.length
       resLen ==> 4

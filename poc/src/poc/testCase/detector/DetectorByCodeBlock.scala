@@ -1,15 +1,17 @@
 package poc.testCase
+package detector
 
-import poc.domain.{Changed, Created, Deleted, DiffFile, Rename, StructureGenerator, TestCaseChangedInfo, TestCaseDetector, TestCaseResolver}
+import poc.codeBlock.CodeBlockGenerator
+import poc.diff.{Changed, Created, Deleted, DiffFile, Rename}
 
-import scala.concurrent.Future
 import scala.async.Async.{async, await}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
-class DetectorByParser(codeBlockGenerator: StructureGenerator, testCaseResolver: TestCaseResolver) extends TestCaseDetector {
+class DetectorByCodeBlock(codeBlockGenerator: CodeBlockGenerator, testCaseResolver: TestCaseResolver) extends TestCaseDetector {
 
-  import DetectorByParser._
+  import DetectorByCodeBlock._
 
   type DetectResult = Future[Seq[TestCaseChangedInfo]]
 
@@ -21,12 +23,20 @@ class DetectorByParser(codeBlockGenerator: StructureGenerator, testCaseResolver:
   }
 
   /**
-   * find all affected test cases by deleted file
+   * find all affected test cases by deleted file,
+   * should report all test cases include this file.
    */
   val handleDeleted: PartialFunction[DiffFile, DetectResult] = {
-    case Deleted(filePath, language) => {
+    case Deleted(filePath, language) => async {
+      await {
+        testCaseResolver.retrieve(filePath)
+      }.map(testCaseInfo =>{
+
+      })
+
+      //      testCaseResolver.re
       val fileInputStream = ???
-      val parseResult = codeBlockGenerator.parse(fileInputStream, "filePath")
+      val parseResult = codeBlockGenerator.generate(fileInputStream, "filePath")
       parseResult.left
       ???
     }
@@ -65,7 +75,7 @@ class DetectorByParser(codeBlockGenerator: StructureGenerator, testCaseResolver:
   }
 }
 
-object DetectorByParser {
+object DetectorByCodeBlock {
   private val createdHandleResult = Future.successful(Seq.empty)
 }
 
