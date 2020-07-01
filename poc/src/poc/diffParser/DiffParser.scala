@@ -28,7 +28,7 @@ class DiffParser extends DiffGenerator {
           val isNew = file.get("isNew").map(_.boolOpt).flatten
           isNew match {
             case Some(true) => Created(newName, language)
-            case None => {
+            case _ => {
               val changedLines = parseChangedLines(file)
               val isRename = file.get("isRename").map(_.boolOpt).flatten
               isRename match {

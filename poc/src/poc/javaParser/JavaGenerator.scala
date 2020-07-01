@@ -34,7 +34,7 @@ class JavaGenerator(parser: JavaParser) extends StructureGenerator {
         Left(Error(filePath, reason))
       }
     } catch {
-      case ex =>
+      case ex: Throwable =>
         Left(Error(filePath, ex.getMessage))
     }
   }

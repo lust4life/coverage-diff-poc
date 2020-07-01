@@ -2,7 +2,11 @@ package poc.domain
 
 import java.io.InputStream
 
-sealed trait DiffFile
+sealed trait DiffFile{
+  def language: String
+
+  def isJava = "java".equalsIgnoreCase(language)
+}
 
 final case class Created(filePath: String, language: String) extends DiffFile
 

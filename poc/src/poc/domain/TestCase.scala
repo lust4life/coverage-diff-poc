@@ -1,5 +1,7 @@
 package poc.domain
 
+import scala.concurrent.Future
+
 /**
  * test case coverage info from db or elsewhere,
  * in order to detect changed info
@@ -23,6 +25,7 @@ trait TestCaseResolver {
 
   /**
    * retrieve a test case info by a file path
+   *
    * @param filePath
    * @return
    */
@@ -33,8 +36,9 @@ trait TestCaseDetector {
 
   /**
    * when we have diff files, we could find changed methods of test case coverage by these diff changed lines
+   *
    * @param diffFiles
    * @return
    */
-  def detectByDiffs(diffFiles: Seq[DiffFile]): Seq[TestCaseChangedInfo]
+  def detect(diffFiles: Seq[DiffFile]): Future[Seq[TestCaseChangedInfo]]
 }
