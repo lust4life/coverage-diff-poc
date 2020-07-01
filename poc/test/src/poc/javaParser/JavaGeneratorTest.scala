@@ -2,7 +2,7 @@ package poc.javaParser
 
 import java.io.{File, FileInputStream}
 
-import poc.domain.ParseResult._
+import poc.domain.StructureGenerator._
 import poc.domain.{BlockRange, ClassOrInterface, Method}
 import utest._
 
@@ -15,7 +15,7 @@ object JavaGeneratorTest extends TestSuite {
       val filePath = file.getAbsolutePath
       val res = generator.parse(new FileInputStream(file), filePath)
 
-      assertMatch(res){
+      assertMatch(res) {
         case Left(Error(`filePath`, _)) =>
       }
     }

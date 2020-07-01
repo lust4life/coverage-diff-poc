@@ -6,7 +6,7 @@ import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.body.MethodDeclaration
 import poc.domain._
 import poc.javaParser.Implicits._
-import poc.domain.ParseResult._
+import poc.domain.StructureGenerator._
 
 import scala.jdk.CollectionConverters._
 import scala.jdk.StreamConverters._

@@ -63,3 +63,14 @@ index abc4e40..9401399 100644
 +        var foo = new Foo();
 +        foo.Parse("/Users/jiajun.qian/git/jacoco/poc/a.diff");
 +    }
+diff --git a/src/main/java/com/poc/Baz.java b/src/main/java/com/poc/Baz1.java
+similarity index 95%
+rename from src/main/java/com/poc/Baz.java
+rename to src/main/java/com/poc/Baz1.java
+index b98b7d9..ba1c76d 100644
+--- a/src/main/java/com/poc/Baz.java
++++ b/src/main/java/com/poc/Baz1.java
+@@ -24 +23,0 @@ public class Baz {
+-        System.out.println(num);
+@@ -28,0 +28 @@ public class Baz {
++        var a = 1;

@@ -2,7 +2,10 @@ package poc.diffParser
 
 import java.io.InputStream
 
-import poc.domain.{Created, DiffFile, DiffGenerator}
+import poc.domain._
+import ujson.Value
+
+import scala.collection.mutable
 
 class DiffParser extends DiffGenerator {
   /**
@@ -15,20 +18,41 @@ class DiffParser extends DiffGenerator {
     json.arr.map(x => {
       val file = x.obj
       val newName = file("newName").str
-      val fileStatus = Created(newName)
+      val oldName = file("oldName").str
+      val language = file("language").str
 
-      val changedLines =
-        file("blocks").arr
-          .flatMap(block => {
-            val newNumbers = block("lines").arr.map(_.obj.get("newNumber").map(_.num))
-            val newStartLine = block.obj.get("newStartLine").map(_.num)
-            newNumbers.addOne(newStartLine)
-          })
-          .filter(_.isDefined)
-          .map(_.get)
-          .toSet
-
-      DiffFile(fileStatus, changedLines)
+      val isDeleted = file.get("isDeleted").map(_.boolOpt).flatten
+      isDeleted match {
+        case Some(true) => Deleted(newName, language)
+        case _ => {
+          val isNew = file.get("isNew").map(_.boolOpt).flatten
+          isNew match {
+            case Some(true) => Created(newName, language)
+            case None => {
+              val changedLines = parseChangedLines(file)
+              val isRename = file.get("isRename").map(_.boolOpt).flatten
+              isRename match {
+                case Some(true) => Rename(oldName, newName, language, changedLines)
+                case _ => Changed(newName, language, changedLines)
+              }
+            }
+          }
+        }
+      }
     }).toSeq
+  }
+
+  private def parseChangedLines(file: mutable.LinkedHashMap[String, Value]) = {
+    file("blocks").arr
+      .flatMap(block => {
+        val newNumbers =
+          block("lines").arr
+            .filter(_.obj.get("type").exists(_.str != "context"))
+            .map(_.obj.get("newNumber").map(_.num))
+        val newStartLine = block.obj.get("newStartLine").map(_.num)
+        newNumbers.addOne(newStartLine)
+      })
+      .flatten
+      .toSet
   }
 }

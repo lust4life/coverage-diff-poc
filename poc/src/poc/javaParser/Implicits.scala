@@ -1,5 +1,4 @@
 package poc.javaParser
-import java.util.Optional
 
 import com.github.javaparser.Range
 import com.github.javaparser.ast.body.{ClassOrInterfaceDeclaration, MethodDeclaration}
@@ -26,7 +25,7 @@ trait Implicits {
       })
     }
 
-    def getClassOrInterfaceBlockOrThrow(filePath: String) ={
+    def getClassOrInterfaceBlockOrThrow(filePath: String) = {
       ClassOrInterface(filePath, getRangeOrThrow(filePath), getFullyQualifiedNameOrThrow(filePath))
     }
   }
@@ -38,16 +37,17 @@ trait Implicits {
       })
     }
 
-    private def getContainerOrThrow(filePath: String) ={
+    private def getContainerOrThrow(filePath: String) = {
       method.findAncestor(classOf[ClassOrInterfaceDeclaration]).orElseThrow(() => {
         throw new Exception(s"${filePath} => ${method.getDeclarationAsString()} method could not find its class or interface")
       })
     }
 
-    def getMethodBlockOrThrow(filePath: String) ={
+    def getMethodBlockOrThrow(filePath: String) = {
       val signature = method.getDeclarationAsString(false, false, false)
       val container = getContainerOrThrow(filePath).getClassOrInterfaceBlockOrThrow(filePath)
       Method(container, signature, getRangeOrThrow(filePath))
     }
   }
+
 }
