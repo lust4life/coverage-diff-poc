@@ -50,7 +50,7 @@ object JavaGeneratorTest extends TestSuite {
 
       val m4 = resSeq(3)
       assertMatch(m4) {
-        case Method(`mockJavaData`, "Optional<N> F4(Optional<N>)", BlockRange(16, 18)) =>
+        case Method(`mockJavaData`, "F4(Optional)", BlockRange(16, 18)) =>
       }
 
       val m5 = resSeq(4)

@@ -44,7 +44,7 @@ trait Implicits {
     }
 
     def getMethodBlockOrThrow(filePath: String) = {
-      val signature = method.getDeclarationAsString(false, false, false)
+      val signature = method.getSignature.asString()
       val container = getContainerOrThrow(filePath).getClassOrInterfaceBlockOrThrow(filePath)
       Method(container, signature, getRangeOrThrow(filePath))
     }
