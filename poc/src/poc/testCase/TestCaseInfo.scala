@@ -12,15 +12,28 @@ import poc.diff.DiffFile
  */
 final case class TestCaseInfo(id: String, coverage: Seq[AffectedFile]) {
   def +(other: TestCaseInfo) = {
-//    this.copy(coverage = coverage.reduc)
-
-    ???
+    if (id.equalsIgnoreCase(other.id)) {
+      val merged = coverage.groupBy(_.filePath).view.mapValues(_.reduce(_ + _)).values.toSeq
+      this.copy(coverage = merged)
+    } else {
+      this
+    }
   }
 }
 
 final case class AffectedFile(filePath: String, affectedMethods: Seq[AffectedMethod]) {
   def findChangedMethodBy(diffFile: DiffFile, codeBlocks: Seq[CodeBlock]) = {
     affectedMethods.filter(_.isChangedBy(diffFile, codeBlocks))
+  }
+
+  def +(other: AffectedFile) = {
+    if (filePath.equalsIgnoreCase(other.filePath)) {
+      val allMethods = affectedMethods ++ other.affectedMethods
+      this.copy(affectedMethods = allMethods.distinct)
+    }
+    else {
+      this
+    }
   }
 }
 
