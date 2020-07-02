@@ -1,5 +1,7 @@
 package poc.codeBlock
 
+import poc.diff.DiffFile
+
 final case class BlockRange(begin: Int, end: Int) {
   require(begin <= end, "begin should <= end")
 }
@@ -10,6 +12,10 @@ sealed trait CodeBlock {
   def range: BlockRange
 
   def filePath: String
+
+  def isChangedByDiff(diffFile: DiffFile) = {
+    diffFile.contains(range)
+  }
 }
 
 final case class ClassOrInterface(filePath: String, range: BlockRange, fullQualification: String) extends CodeBlock {

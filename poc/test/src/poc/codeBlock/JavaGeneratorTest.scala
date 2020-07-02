@@ -27,7 +27,7 @@ object JavaGeneratorTest extends TestSuite {
 
       assert(res.isRight)
 
-      val resSeq = res.toSeq.flatMap(_.result)
+      val resSeq = res.toSeq.flatMap(_.codeBlocks)
       val methodCount = resSeq.length
       assert(methodCount == 6)
 

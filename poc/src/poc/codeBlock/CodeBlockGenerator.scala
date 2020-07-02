@@ -18,8 +18,17 @@ trait CodeBlockGenerator {
 
 object CodeBlockGenerator {
 
-  final case class Success(filePath: String, result: Seq[CodeBlock])
+  final case class Success(filePath: String, codeBlocks: Seq[CodeBlock])
 
   final case class Error(filePath: String, reason: String)
 
 }
+
+trait CodeBlockGeneratorByFilePath {
+  self: CodeBlockGenerator with FilePathResolver =>
+
+  def generate(filePath: String): Either[CodeBlockGenerator.Error, CodeBlockGenerator.Success] = {
+    generate(getStream(filePath), filePath)
+  }
+}
+

@@ -4,7 +4,7 @@ import poc.testCase.{TestCaseInfo, TestCaseResolver}
 
 import scala.concurrent.Future
 
-class ResolverFromDb extends TestCaseResolver{
+class TestCaseResolverFromDb extends TestCaseResolver {
   /**
    * retrieve a test case info by a file path
    *
