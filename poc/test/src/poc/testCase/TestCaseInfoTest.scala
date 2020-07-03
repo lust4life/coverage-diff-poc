@@ -25,7 +25,7 @@ object TestCaseInfoTest extends TestSuite {
       val t4 = TestCaseInfo("1", Seq(AffectedFile("b", Seq(b2))))
 
       val res = t1 + t2 + t3 + t4
-      res ==> TestCaseInfo("1", List(AffectedFile("a", List(a1, a2)), AffectedFile("b", List(b1, b2))))
+      res ==> TestCaseInfo("1", Seq(AffectedFile("a", Seq(a1, a2)), AffectedFile("b", Seq(b1, b2))))
     }
 
     "affected file plus with different path" - {

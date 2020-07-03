@@ -17,27 +17,21 @@ import scala.util.Try
 object TestCaseDetectorByCodeBlockTest extends TestSuite {
 
   val tests = Tests {
+
+    val mockTestCaseResolver = mock[TestCaseResolver]
+    when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
+
+    val mockJavaBlockGenerator = mock[CodeBlockGeneratorByFilePath]
+    val testCaseResolverByDiff = new TestCaseResolverByDiff(mockTestCaseResolver, JavaDiffFilter)
+    val detector = new TestCaseDetectorByCodeBlock(mockJavaBlockGenerator, testCaseResolverByDiff)
+
     "handleFallback should show missing type" - {
-      val mockTestCaseResolver = mock[TestCaseResolver]
-      when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
-
-      val mockJavaBlockGenerator = mock[CodeBlockGeneratorByFilePath]
-      val testCaseResolverByDiff = new TestCaseResolverByDiff(mockTestCaseResolver, JavaDiffFilter)
-      val detector = new TestCaseDetectorByCodeBlock(mockJavaBlockGenerator, testCaseResolverByDiff)
-
       Try {
         Seq((classOf[Created], Seq.empty)).collect(detector.handleFallback)
       }.failed.get.getMessage ==> "should handle all case. missing class poc.diff.Created"
     }
 
     "handle created file should return empty" - async {
-      val mockTestCaseResolver = mock[TestCaseResolver]
-      when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
-
-      val mockJavaBlockGenerator = mock[CodeBlockGeneratorByFilePath]
-      val testCaseResolverByDiff = new TestCaseResolverByDiff(mockTestCaseResolver, JavaDiffFilter)
-      val detector = new TestCaseDetectorByCodeBlock(mockJavaBlockGenerator, testCaseResolverByDiff)
-
       val res = await {
         detector.handleCreated(classOf[Created], Seq.empty)
       }
@@ -46,13 +40,6 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
     }
 
     "handle deleted file should return empty" - async {
-      val mockTestCaseResolver = mock[TestCaseResolver]
-      when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
-
-      val mockJavaBlockGenerator = mock[CodeBlockGeneratorByFilePath]
-      val testCaseResolverByDiff = new TestCaseResolverByDiff(mockTestCaseResolver, JavaDiffFilter)
-      val detector = new TestCaseDetectorByCodeBlock(mockJavaBlockGenerator, testCaseResolverByDiff)
-
       val filePath = "a.java"
       when(mockTestCaseResolver.retrieve(filePath))
         .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", Seq(AffectedFile(filePath, Seq.empty))))))
@@ -67,13 +54,6 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
     }
 
     "handle changed file should return empty" - async {
-      val mockTestCaseResolver = mock[TestCaseResolver]
-      when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
-
-      val mockJavaBlockGenerator = mock[CodeBlockGeneratorByFilePath]
-      val testCaseResolverByDiff = new TestCaseResolverByDiff(mockTestCaseResolver, JavaDiffFilter)
-      val detector = new TestCaseDetectorByCodeBlock(mockJavaBlockGenerator, testCaseResolverByDiff)
-
       val filePath = "a.java"
       val mockMethod = "a.b.c\t#\tDoSomething(Int,String)"
       val affectedMethods = Seq(AffectedMethod(mockMethod), AffectedMethod("a.b.c\t#\tanother mockMethod"))
@@ -95,13 +75,6 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
     }
 
     "handle rename file should return empty" - async {
-      val mockTestCaseResolver = mock[TestCaseResolver]
-      when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
-
-      val mockJavaBlockGenerator = mock[CodeBlockGeneratorByFilePath]
-      val testCaseResolverByDiff = new TestCaseResolverByDiff(mockTestCaseResolver, JavaDiffFilter)
-      val detector = new TestCaseDetectorByCodeBlock(mockJavaBlockGenerator, testCaseResolverByDiff)
-
       val fromFilePath = "a.java"
       val toFilePath = "b.java"
       val mockMethod = "a.b.c\t#\tDoSomething(Int,String)"
