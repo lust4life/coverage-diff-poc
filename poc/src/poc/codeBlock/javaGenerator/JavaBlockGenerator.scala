@@ -16,7 +16,7 @@ class JavaBlockGenerator(parser: JavaParser) extends CodeBlockGenerator {
 
   def this() = this(new JavaParser())
 
-  override def generate(in: InputStream, filePath: String): Either[Error, Success] = {
+  override def generate(in: InputStream, filePath: String): GenerateResult = {
     try {
       val parseRes = parser.parse(in)
       if (parseRes.isSuccessful) {

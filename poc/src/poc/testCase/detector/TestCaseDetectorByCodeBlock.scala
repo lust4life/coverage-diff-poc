@@ -3,6 +3,7 @@ package detector
 
 import poc.codeBlock.CodeBlockGeneratorByFilePath
 import poc.diff._
+import poc.Implicits._
 
 import scala.async.Async.{async, await}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -13,6 +14,8 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
   import TestCaseDetectorByCodeBlock._
 
   type DetectResult = Future[Seq[TestCaseChangedInfo]]
+
+  val generateCodeBlockByCache = memorize(codeBlockGenerator.generate)
 
   /**
    * skip created file change
@@ -56,8 +59,7 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
                 .map(renamedFile => {
                   val toFilePath = renamedFile.to
 
-                  codeBlockGenerator
-                    .generate(toFilePath)
+                  generateCodeBlockByCache(toFilePath)
                     .map(x => {
                       val changedMethods =
                         affectedFile.findChangedMethodBy(renamedFile, x.codeBlocks).map(_.signature)
@@ -87,8 +89,7 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
               changedFiles
                 .find(_.filePath.equalsIgnoreCase(filePath))
                 .map(changedFile => {
-                  codeBlockGenerator
-                    .generate(filePath)
+                  generateCodeBlockByCache(filePath)
                     .map(x => {
                       val changedMethods =
                         affectedFile.findChangedMethodBy(changedFile, x.codeBlocks).map(_.signature)

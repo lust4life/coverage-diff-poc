@@ -17,5 +17,14 @@ trait Implicits {
     }
   }
 
+  def memorize[Input, Output](f: Input => Output): Input => Output = {
+    val cache = new scala.collection.mutable.HashMap[Input, Output]()
+
+    input => {
+      cache.getOrElseUpdate(input, {
+        f(input)
+      })
+    }
+  }
 }
 
