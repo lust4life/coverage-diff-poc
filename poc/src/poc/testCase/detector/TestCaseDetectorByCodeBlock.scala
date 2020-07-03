@@ -15,7 +15,7 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
 
   type DetectResult = Future[Seq[TestCaseChangedInfo]]
 
-  val generateCodeBlockByCache = memorize(codeBlockGenerator.generate)
+  private val generateCodeBlockByCache = memorize(codeBlockGenerator.generate)
 
   /**
    * skip created file change

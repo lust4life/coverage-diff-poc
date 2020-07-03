@@ -22,7 +22,10 @@ object poc extends ScalaModule {
   trait utest extends Tests {
     def testFrameworks = Seq("utest.runner.Framework")
 
-    override def ivyDeps = Agg(ivy"com.lihaoyi::utest::0.7.4")
+    override def ivyDeps = Agg(
+      ivy"com.lihaoyi::utest::0.7.4",
+      ivy"org.mockito::mockito-scala:1.14.8",
+    )
   }
 
   object test extends utest
