@@ -9,12 +9,8 @@ sealed trait DiffFile {
 
   val changedLines: Set[Double]
 
-  val compactChangeLines = {
-    changedLines
-  }
-
-  def contains(range: BlockRange) ={
-    ???
+  def hasChangedLineIn(range: BlockRange) ={
+    changedLines.exists(line => line >= range.begin && line <= range.end  )
   }
 }
 

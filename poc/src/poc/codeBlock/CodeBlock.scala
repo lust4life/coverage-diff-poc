@@ -14,7 +14,7 @@ sealed trait CodeBlock {
   def filePath: String
 
   def isChangedByDiff(diffFile: DiffFile) = {
-    diffFile.contains(range)
+    diffFile.hasChangedLineIn(range)
   }
 }
 
