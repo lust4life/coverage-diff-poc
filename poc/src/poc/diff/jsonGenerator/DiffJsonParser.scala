@@ -15,29 +15,27 @@ class DiffJsonParser extends DiffGenerator {
    */
   override def generate(in: InputStream): Seq[DiffFile] = {
     val json = ujson.read(in)
-    json.arr.map(x => {
+    json.arr.map(f = x => {
       val file = x.obj
       val newName = file("newName").str
       val oldName = file("oldName").str
       val language = file("language").str
 
-      val isDeleted = file.get("isDeleted").map(_.boolOpt).flatten
+      val isDeleted = file.get("isDeleted").flatMap(_.boolOpt)
       isDeleted match {
         case Some(true) => Deleted(newName, language)
-        case _ => {
-          val isNew = file.get("isNew").map(_.boolOpt).flatten
+        case _ =>
+          val isNew = file.get("isNew").flatMap(_.boolOpt)
           isNew match {
             case Some(true) => Created(newName, language)
-            case _ => {
+            case _ =>
               val changedLines = parseChangedLines(file)
-              val isRename = file.get("isRename").map(_.boolOpt).flatten
+              val isRename = file.get("isRename").flatMap(_.boolOpt)
               isRename match {
                 case Some(true) => Rename(oldName, newName, language, changedLines)
                 case _ => Changed(newName, language, changedLines)
               }
-            }
           }
-        }
       }
     }).toSeq
   }

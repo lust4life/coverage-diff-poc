@@ -5,18 +5,19 @@ import poc.codeBlock.BlockRange
 sealed trait DiffFile {
   def language: String
 
-  def isJava = "java".equalsIgnoreCase(language)
+  def isJava: Boolean = "java".equalsIgnoreCase(language)
 
   val changedLines: Set[Double]
 
-  def hasChangedLineIn(range: BlockRange) ={
-    changedLines.exists(line => line >= range.begin && line <= range.end  )
+  def hasChangedLineIn(range: BlockRange): Boolean = {
+    changedLines.exists(line => line >= range.begin && line <= range.end)
   }
 }
 
 final case class Created(filePath: String, language: String) extends DiffFile {
   /**
    * no need changed lines info
+   *
    * @return
    */
   override val changedLines: Set[Double] = Set.empty

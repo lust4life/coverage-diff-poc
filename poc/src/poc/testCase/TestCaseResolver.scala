@@ -22,7 +22,7 @@ trait TestCaseResolver {
    */
   def retrieve(filePaths: Seq[String]): Future[Seq[TestCaseInfo]] = async {
     await {
-      val allRes = filePaths.map(retrieve(_))
+      val allRes = filePaths.map(retrieve)
       Future.sequence(allRes)
     }.flatten
   }

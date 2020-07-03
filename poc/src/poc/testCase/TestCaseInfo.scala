@@ -11,7 +11,7 @@ import poc.diff.DiffFile
  * @param coverage affected files
  */
 final case class TestCaseInfo(id: String, coverage: Seq[AffectedFile]) {
-  def +(other: TestCaseInfo) = {
+  def +(other: TestCaseInfo): TestCaseInfo = {
     if (id.equalsIgnoreCase(other.id)) {
       val allCoverage = coverage ++ other.coverage
       val merged = allCoverage.groupBy(_.filePath).view.mapValues(_.reduce(_ + _)).values.toSeq
@@ -23,11 +23,11 @@ final case class TestCaseInfo(id: String, coverage: Seq[AffectedFile]) {
 }
 
 final case class AffectedFile(filePath: String, affectedMethods: Seq[AffectedMethod]) {
-  def findChangedMethodBy(diffFile: DiffFile, codeBlocks: Seq[CodeBlock]) = {
+  def findChangedMethodBy(diffFile: DiffFile, codeBlocks: Seq[CodeBlock]): Seq[AffectedMethod] = {
     affectedMethods.filter(_.isChangedBy(diffFile, codeBlocks))
   }
 
-  def +(other: AffectedFile) = {
+  def +(other: AffectedFile): AffectedFile = {
     if (filePath.equalsIgnoreCase(other.filePath)) {
       val allMethods = affectedMethods ++ other.affectedMethods
       this.copy(affectedMethods = allMethods.distinct)
@@ -47,7 +47,7 @@ final case class AffectedMethod(signature: String) {
    * @param codeBlocks
    * @return
    */
-  def isChangedBy(diffFile: DiffFile, codeBlocks: Seq[CodeBlock]) = {
+  def isChangedBy(diffFile: DiffFile, codeBlocks: Seq[CodeBlock]): Boolean = {
     codeBlocks.find(_.id == signature).forall(_.isChangedByDiff(diffFile))
   }
 }
