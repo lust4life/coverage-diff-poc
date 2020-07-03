@@ -13,7 +13,8 @@ import poc.diff.DiffFile
 final case class TestCaseInfo(id: String, coverage: Seq[AffectedFile]) {
   def +(other: TestCaseInfo) = {
     if (id.equalsIgnoreCase(other.id)) {
-      val merged = coverage.groupBy(_.filePath).view.mapValues(_.reduce(_ + _)).values.toSeq
+      val allCoverage = coverage ++ other.coverage
+      val merged = allCoverage.groupBy(_.filePath).view.mapValues(_.reduce(_ + _)).values.toSeq
       this.copy(coverage = merged)
     } else {
       this
