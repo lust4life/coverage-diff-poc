@@ -4,13 +4,12 @@ import poc.diff._
 
 import scala.concurrent.Future
 
-trait TestCaseResolverByDiff {
-  self: TestCaseResolver with DiffFilter =>
+class TestCaseResolverByDiff(resolver: TestCaseResolver, diffFilter: DiffFilter) {
 
-  def retrieveByDiffs(diffs: Seq[DiffFile]): Future[Seq[TestCaseInfo]] = {
-    retrieve(
+  def retrieve(diffs: Seq[DiffFile]): Future[Seq[TestCaseInfo]] = {
+    resolver.retrieve(
       diffs
-        .filter(diffFilter)
+        .filter(diffFilter.filter)
         .map({
           case Created(filePath, _) => filePath
           case Deleted(filePath, _) => filePath

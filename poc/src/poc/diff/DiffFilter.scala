@@ -1,9 +1,9 @@
 package poc.diff
 
 trait DiffFilter {
-  def diffFilter: DiffFile => Boolean
+  def filter: DiffFile => Boolean
 }
 
-trait FilterJavaDiff extends DiffFilter {
-  override def diffFilter: DiffFile => Boolean = _.isJava
+object JavaDiffFilter extends DiffFilter {
+  override def filter: DiffFile => Boolean = _.isJava
 }

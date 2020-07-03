@@ -28,7 +28,7 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
   val handleDeleted: PartialFunction[(Class[_], Seq[DiffFile]), DetectResult] = {
     case (x, diffs) if x == classOf[Deleted] => async {
       await {
-        testCaseResolver.retrieveByDiffs(diffs)
+        testCaseResolver.retrieve(diffs)
       }.merged
         .map(testCase => {
           val reasonByDelete = testCase.coverage.map(affectedFile => FileDeleted(affectedFile.filePath))
@@ -45,7 +45,7 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
     case (x, diffs) if x == classOf[Rename] => async {
       val renamedFiles = diffs.cast[Rename]
       await {
-        testCaseResolver.retrieveByDiffs(diffs)
+        testCaseResolver.retrieve(diffs)
       }.merged
         .map(testCase => {
           val reasonByRename =
@@ -77,7 +77,7 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
     case (x, diffs) if x == classOf[Changed] => async {
       val changedFiles = diffs.cast[Changed]
       await {
-        testCaseResolver.retrieveByDiffs(diffs)
+        testCaseResolver.retrieve(diffs)
       }.merged
         .map(testCase => {
           val reasonByChange =

@@ -1,26 +1,21 @@
 package poc.testCase
 
-import java.io.InputStream
-
-import poc.codeBlock.{CodeBlockGenerator, CodeBlockGeneratorByFilePath, FilePathResolver}
+import poc.codeBlock.CodeBlockGeneratorByFilePath
+import poc.codeBlock.filePathResolver.CodeBlockFilePathResolverByLocalFile
 import poc.codeBlock.javaGenerator.JavaBlockGenerator
 import poc.diff._
 import poc.testCase.detector.TestCaseDetectorByCodeBlock
 import poc.testCase.resolver.TestCaseResolverFromDb
 import utest._
 
-import scala.util.Try
 import scala.async.Async._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 
 object TestCaseDetectorByCodeBlockTest extends TestSuite {
-  val javaBlockGenerator = new JavaBlockGenerator() with CodeBlockGeneratorByFilePath with FilePathResolver {
-    override def getStream(filePath: String): InputStream = ???
-  }
-
-  val testCaseResolver =  new TestCaseResolverFromDb() with FilterJavaDiff with TestCaseResolverByDiff
-
+  val javaBlockGenerator = new CodeBlockGeneratorByFilePath(new JavaBlockGenerator, new CodeBlockFilePathResolverByLocalFile)
+  val testCaseResolver = new TestCaseResolverByDiff(new TestCaseResolverFromDb, JavaDiffFilter)
   val detector = new TestCaseDetectorByCodeBlock(javaBlockGenerator, testCaseResolver)
 
   val tests = Tests {

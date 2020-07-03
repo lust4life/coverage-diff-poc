@@ -24,11 +24,5 @@ object CodeBlockGenerator {
 
 }
 
-trait CodeBlockGeneratorByFilePath {
-  self: CodeBlockGenerator with FilePathResolver =>
 
-  def generate(filePath: String): Either[CodeBlockGenerator.Error, CodeBlockGenerator.Success] = {
-    generate(getStream(filePath), filePath)
-  }
-}
 
