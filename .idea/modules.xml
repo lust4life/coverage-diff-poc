@@ -3,6 +3,7 @@
         <modules>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/mill-build.iml" filepath="$PROJECT_DIR$/.idea_modules/mill-build.iml"/>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.integration.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.integration.iml"/>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.test.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.test.iml"/>
         </modules>
     </component>

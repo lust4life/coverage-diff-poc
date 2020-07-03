@@ -7,6 +7,7 @@ object Deps {
   def scalaReflect(scalaVersion: String) = ivy"org.scala-lang:scala-reflect:${scalaVersion}"
 }
 
+
 object poc extends ScalaModule {
   override def scalaVersion = "2.13.3"
 
@@ -18,12 +19,13 @@ object poc extends ScalaModule {
     Deps.scalaReflect(scalaVersion()),
   )
 
-
-  object test extends Tests {
+  trait utest extends Tests {
     def testFrameworks = Seq("utest.runner.Framework")
 
     override def ivyDeps = Agg(ivy"com.lihaoyi::utest::0.7.4")
   }
 
+  object test extends utest
+  object integration extends utest
 }
 

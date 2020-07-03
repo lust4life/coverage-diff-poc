@@ -1,7 +1,5 @@
 package poc.diff
 
-import java.nio.file.{Files, Paths}
-
 import poc.diff.jsonGenerator.DiffJsonParser
 import utest._
 
@@ -13,7 +11,8 @@ object DiffJsonParserTest extends TestSuite {
   val tests = Tests {
 
     "parse diff json file" - {
-      val in = Files.newInputStream(Paths.get("poc/test/resources/diff.json"))
+
+      val in = getClass.getClassLoader.getResourceAsStream("diff.json")
       val res = diffParser.generate(in)
 
       val resLen = res.length

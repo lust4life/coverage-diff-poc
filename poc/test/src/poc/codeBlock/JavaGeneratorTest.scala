@@ -1,7 +1,5 @@
 package poc.codeBlock
 
-import java.io.{File, FileInputStream}
-
 import poc.codeBlock.CodeBlockGenerator.Error
 import poc.codeBlock.javaGenerator.JavaBlockGenerator
 import utest._
@@ -11,9 +9,9 @@ object JavaGeneratorTest extends TestSuite {
 
   val tests = Tests {
     "invalid file should failed" - {
-      val file = new File("poc/test/resources/Invalid.java")
-      val filePath = file.getAbsolutePath
-      val res = generator.generate(new FileInputStream(file), filePath)
+      val file = getClass.getClassLoader.getResource("Invalid.java")
+      val filePath = file.getPath
+      val res = generator.generate(file.openStream(), filePath)
 
       assertMatch(res) {
         case Left(Error(`filePath`, _)) =>
@@ -21,9 +19,9 @@ object JavaGeneratorTest extends TestSuite {
     }
 
     'testParse - {
-      val file = new File("poc/test/resources/MockJavaData.java")
-      val filePath = file.getAbsolutePath
-      val res = generator.generate(new FileInputStream(file), filePath)
+      val file = getClass.getClassLoader.getResource("MockJavaData.java")
+      val filePath = file.getPath
+      val res = generator.generate(file.openStream(), filePath)
 
       assert(res.isRight)
 
