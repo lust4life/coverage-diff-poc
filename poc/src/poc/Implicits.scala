@@ -1,5 +1,8 @@
 package poc
 
+import java.io.FileNotFoundException
+import java.net.URL
+
 import scala.reflect._
 
 object Implicits extends Implicits
@@ -26,5 +29,10 @@ trait Implicits {
     val cache = scala.collection.mutable.Map.empty[Input, Output]
     input => cache.getOrElseUpdate(input, f(input))
   }
-}
 
+  def fromResource(resource: String, classLoader: ClassLoader = Thread.currentThread().getContextClassLoader()): URL =
+    Option(classLoader.getResource(resource)) match {
+      case Some(url) => url
+      case None => throw new FileNotFoundException(s"resource '$resource' was not found in the classpath from the given classloader.")
+    }
+}

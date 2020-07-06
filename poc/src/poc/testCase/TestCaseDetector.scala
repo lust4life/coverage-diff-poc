@@ -14,5 +14,3 @@ trait TestCaseDetector {
    */
   def detect(diffFiles: Seq[DiffFile]): Future[Seq[TestCaseChangedInfo]]
 }
-
-
