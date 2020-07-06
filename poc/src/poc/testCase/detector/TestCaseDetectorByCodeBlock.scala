@@ -33,9 +33,9 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
       await {
         testCaseResolver.retrieve(diffs)
       }.merged
-        .map(testCase => {
+        .flatMap(testCase => {
           val reasonByDelete = testCase.coverage.map(affectedFile => FileDeleted(affectedFile.filePath))
-          TestCaseChangedInfo(testCase.id, reasonByDelete)
+          Option.unless(reasonByDelete.isEmpty)(TestCaseChangedInfo(testCase.id, reasonByDelete))
         })
         .toSeq
     }
@@ -50,26 +50,27 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
       await {
         testCaseResolver.retrieve(diffs)
       }.merged
-        .map(testCase => {
+        .flatMap(testCase => {
           val reasonByRename =
             testCase.coverage.flatMap(affectedFile => {
               val fromFilePath = affectedFile.filePath
               renamedFiles
                 .find(_.from.equalsIgnoreCase(fromFilePath))
-                .map(renamedFile => {
+                .flatMap(renamedFile => {
                   val toFilePath = renamedFile.to
 
                   generateCodeBlockByCache(toFilePath)
                     .map(x => {
                       val changedMethods =
                         affectedFile.findChangedMethodBy(renamedFile, x.codeBlocks).map(_.signature)
-                      FileRenamed(fromFilePath, toFilePath, changedMethods)
+
+                      Option.unless(changedMethods.isEmpty)(FileRenamed(fromFilePath, toFilePath, changedMethods))
                     })
-                    .fold(error => UnknownError(error.filePath, error.reason), identity)
+                    .fold(error => Some(UnknownError(error.filePath, error.reason)), identity)
                 })
             })
 
-          TestCaseChangedInfo(testCase.id, reasonByRename)
+          Option.unless(reasonByRename.isEmpty)(TestCaseChangedInfo(testCase.id, reasonByRename))
         })
         .toSeq
     }
@@ -81,25 +82,26 @@ class TestCaseDetectorByCodeBlock(codeBlockGenerator: CodeBlockGeneratorByFilePa
       await {
         testCaseResolver.retrieve(diffs)
       }.merged
-        .map(testCase => {
+        .flatMap(testCase => {
           val reasonByChange =
             testCase.coverage.flatMap(affectedFile => {
               val filePath = affectedFile.filePath
 
               changedFiles
                 .find(_.filePath.equalsIgnoreCase(filePath))
-                .map(changedFile => {
+                .flatMap(changedFile => {
                   generateCodeBlockByCache(filePath)
                     .map(x => {
                       val changedMethods =
                         affectedFile.findChangedMethodBy(changedFile, x.codeBlocks).map(_.signature)
-                      FileChanged(filePath, changedMethods)
+
+                      Option.unless(changedMethods.isEmpty)(FileChanged(filePath, changedMethods))
                     })
-                    .fold(error => UnknownError(error.filePath, error.reason), identity)
+                    .fold(error => Some(UnknownError(error.filePath, error.reason)), identity)
                 })
             })
 
-          TestCaseChangedInfo(testCase.id, reasonByChange)
+          Option.unless(reasonByChange.isEmpty)(TestCaseChangedInfo(testCase.id, reasonByChange))
         })
         .toSeq
     }

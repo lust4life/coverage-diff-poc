@@ -39,7 +39,7 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
       res ==> Seq.empty
     }
 
-    "handle deleted file should return empty" - async {
+    "handle deleted file" - async {
       val filePath = "a.java"
       when(mockTestCaseResolver.retrieve(filePath))
         .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", Seq(AffectedFile(filePath, Seq.empty))))))
@@ -53,7 +53,23 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
       res ==> Seq(TestCaseChangedInfo("test case 1", Seq(FileDeleted(filePath))))
     }
 
-    "handle changed file should return empty" - async {
+    "handle deleted file filter empty case" - async {
+      val filePath = "a.java"
+
+      // test case info's coverage is empty means a edge case, should filter empty results
+      when(mockTestCaseResolver.retrieve(filePath))
+        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", Seq.empty))))
+
+      when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
+
+      val res = await {
+        detector.handleDeleted(classOf[Deleted], Seq(Deleted(filePath, "java")))
+      }
+
+      res ==> Seq.empty
+    }
+
+    "handle changed file" - async {
       val filePath = "a.java"
       val mockMethod = "a.b.c\t#\tDoSomething(Int,String)"
       val affectedMethods = Seq(AffectedMethod(mockMethod), AffectedMethod("a.b.c\t#\tanother mockMethod"))
@@ -72,9 +88,17 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
       }
 
       res ==> Seq(TestCaseChangedInfo("test case 1", Seq(FileChanged(filePath, Seq(mockMethod)))))
+
+      val res2 = await {
+        // no methods changed
+        val changedLines = Set(40.0)
+        detector.handleChanged(classOf[Changed], Seq(Changed(filePath, "java", changedLines)))
+      }
+
+      res2 ==> Seq.empty
     }
 
-    "handle rename file should return empty" - async {
+    "handle rename file" - async {
       val fromFilePath = "a.java"
       val toFilePath = "b.java"
       val mockMethod = "a.b.c\t#\tDoSomething(Int,String)"
@@ -94,6 +118,14 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
       }
 
       res ==> Seq(TestCaseChangedInfo("test case 1", Seq(FileRenamed(fromFilePath, toFilePath, Seq(mockMethod)))))
+
+      val res2 = await {
+        // no methods changed
+        val changedLines = Set(40.0)
+        detector.handleRename(classOf[Rename], Seq(Rename(fromFilePath, toFilePath, "java", changedLines)))
+      }
+
+      res2 ==> Seq.empty
     }
   }
 }
