@@ -1,0 +1,6 @@
+diff --git a/src/main/java/com/poc/TestCaseEntry.java b/src/main/java/com/poc/TestCaseEntry.java
+index e1feeb8..044b0dc 100644
+--- a/src/main/java/com/poc/TestCaseEntry.java
++++ b/src/main/java/com/poc/TestCaseEntry.java
+@@ -17,0 +18 @@ public class TestCaseEntry {
++        // should affect test case 1,2

@@ -1,0 +1,6 @@
+diff --git a/src/main/java/com/poc/SharedLib.java b/src/main/java/com/poc/SharedLib.java
+index 7feafb7..92bf301 100644
+--- a/src/main/java/com/poc/SharedLib.java
++++ b/src/main/java/com/poc/SharedLib.java
+@@ -10,0 +11 @@ public class SharedLib {
++        // should affect test case 1
