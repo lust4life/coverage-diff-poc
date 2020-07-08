@@ -6,8 +6,8 @@ import poc.Implicits._
 import poc.codeBlock.javaGenerator.JavaBlockGenerator
 import poc.codeBlock.{CodeBlockFilePathResolver, CodeBlockGeneratorByFilePath}
 import poc.diff.JavaDiffFilter
-import poc.diff.jsonGenerator.DiffJsonParser
-import poc.testCase.{AffectedFile, AffectedMethod, TestCaseInfo, TestCaseResolver, TestCaseResolverByDiff}
+import poc.diff.jsonGenerator.{DiffGeneratorByDiffJson, DiffGeneratorByUnifiedDiff}
+import poc.testCase.{AffectedFile, AffectedMethod, FileChanged, TestCaseChangedInfo, TestCaseInfo, TestCaseResolver, TestCaseResolverByDiff}
 import utest._
 
 import scala.async.Async._
@@ -22,7 +22,7 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
     val mockCodeBlockFilePathResolver = mock[CodeBlockFilePathResolver]
     val codeBlockGenerator = new CodeBlockGeneratorByFilePath(new JavaBlockGenerator, mockCodeBlockFilePathResolver)
     val testCaseDetector = new TestCaseDetectorByCodeBlock(codeBlockGenerator, testCaseResolverByDiff)
-    val detectorByDiffStream = new TestCaseDetectorByDiffStream(new DiffJsonParser, testCaseDetector)
+    val detectorByDiffStream = new TestCaseDetectorByDiffStream(new DiffGeneratorByUnifiedDiff, testCaseDetector)
 
     when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
     val sharedLibPath = "src/main/java/com/poc/SharedLib.java"
@@ -33,13 +33,14 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
           TestCaseInfo("TestCase1", Seq(
             AffectedFile(sharedLibPath, Seq(
               AffectedMethod("com.poc.SharedLib\t#\tDoubleNumber(Integer)"),
-              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)")
+              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)"),
             ))
           )),
           TestCaseInfo("TestCase2", Seq(
             AffectedFile(sharedLibPath, Seq(
               AffectedMethod("com.poc.SharedLib\t#\tUseInnerClass(T)"),
-              AffectedMethod("com.poc.SharedLib.InnerSharedLib\t#\tIdentity(T)")
+              AffectedMethod("com.poc.SharedLib.InnerSharedLib\t#\tIdentity(T)"),
+              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)"),
             ))
           )),
           TestCaseInfo("TestCase3", Seq(
@@ -77,48 +78,71 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
     })
 
     "change testcase 1" - async {
-      val in = fromResource("testcase1.json").openStream()
+      val in = fromResource("testcase.1.diff").openStream()
       val testCaseChangedInfos = await {
         detectorByDiffStream.detect(in)
       }
       in.close()
 
-      println(testCaseChangedInfos)
       testCaseChangedInfos.length ==> 1
+      testCaseChangedInfos ==> Seq(
+        TestCaseChangedInfo("TestCase1", Seq(
+          FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
+            "com.poc.SharedLib	#	DoubleNumber(Integer)")))))
     }
 
     "change testcase 2" - async {
-      val in = fromResource("testcase2.json").openStream()
+      val in = fromResource("testcase.2.diff").openStream()
       val testCaseChangedInfos = await {
         detectorByDiffStream.detect(in)
       }
       in.close()
 
-      println(testCaseChangedInfos)
       testCaseChangedInfos.length ==> 1
+      testCaseChangedInfos ==> Seq(
+        TestCaseChangedInfo("TestCase2", Seq(
+          FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
+            "com.poc.SharedLib.InnerSharedLib\t#\tIdentity(T)")))))
     }
 
     "change testcase 1 and 2" - async {
-      val in = fromResource("testcase1.2.json").openStream()
+      val in = fromResource("testcase.1.2.diff").openStream()
       val testCaseChangedInfos = await {
         detectorByDiffStream.detect(in)
       }
       in.close()
 
-      println(testCaseChangedInfos)
       testCaseChangedInfos.length ==> 2
+      testCaseChangedInfos.sortBy(_.id) ==> Seq(
+        TestCaseChangedInfo("TestCase1", Seq(
+          FileChanged("src/main/java/com/poc/TestCaseEntry.java", Seq(
+            "com.poc.TestCaseEntry\t#\tDoubleNumIfMoreThan5(Integer)")))),
+
+        TestCaseChangedInfo("TestCase2", Seq(
+          FileChanged("src/main/java/com/poc/TestCaseEntry.java", Seq(
+            "com.poc.TestCaseEntry\t#\tDoubleNumIfMoreThan5(Integer)")))))
     }
 
     "change testcase 1 and 2 and 3" - async {
-      val in = fromResource("testcase.1.2.3.json").openStream()
+      val in = fromResource("testcase.1.2.3.diff").openStream()
       val testCaseChangedInfos = await {
         detectorByDiffStream.detect(in)
       }
       in.close()
 
-      println(testCaseChangedInfos)
       testCaseChangedInfos.length ==> 3
+      testCaseChangedInfos.sortBy(_.id) ==> Seq(
+        TestCaseChangedInfo("TestCase1", Seq(
+          FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
+            "com.poc.SharedLib\t#\tCommonLogInfo(T)")))),
+
+        TestCaseChangedInfo("TestCase2", Seq(
+          FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
+            "com.poc.SharedLib\t#\tCommonLogInfo(T)")))),
+
+        TestCaseChangedInfo("TestCase3", Seq(
+          FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
+            "com.poc.SharedLib\t#\tCommonLogInfo(T)")))))
     }
   }
-
 }

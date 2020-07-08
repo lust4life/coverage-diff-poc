@@ -16,6 +16,7 @@ object poc extends ScalaModule {
     ivy"com.github.javaparser:javaparser-core:3.16.1",
     ivy"com.lihaoyi::upickle:1.1.0",
     ivy"org.scala-lang.modules::scala-async:0.10.0",
+    ivy"com.lihaoyi::os-lib:0.7.0",
     Deps.scalaReflect(scalaVersion()),
   )
 

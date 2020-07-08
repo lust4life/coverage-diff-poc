@@ -7,7 +7,7 @@ import ujson.Value
 
 import scala.collection.mutable
 
-class DiffJsonParser extends DiffGenerator {
+class DiffGeneratorByDiffJson extends DiffGenerator {
   /**
    * 解析 diff，生成 diff-result
    *
