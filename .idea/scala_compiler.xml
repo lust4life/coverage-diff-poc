@@ -1,6 +1,6 @@
 <project version="4">
     <component name="ScalaCompilerConfiguration">
-        <profile name="mill 1" modules="main.github,main.mongodb,main,main.integration,example,main.test">
+        <profile name="mill 1" modules="poc.github,poc,poc.mongodb,poc.integration,poc.test,example">
             <parameters> </parameters>
             <plugins> </plugins>
         </profile>

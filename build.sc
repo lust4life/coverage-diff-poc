@@ -8,7 +8,7 @@ object Deps {
 }
 
 
-object main extends ScalaModule {
+object poc extends ScalaModule {
   override def scalaVersion = "2.13.3"
 
 
@@ -35,7 +35,7 @@ object main extends ScalaModule {
 
 
   object github extends ScalaModule {
-    override def scalaVersion = main.scalaVersion
+    override def scalaVersion = poc.scalaVersion
 
     override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
       ivy"com.lihaoyi::requests:0.6.2",
@@ -45,7 +45,7 @@ object main extends ScalaModule {
   }
 
   object mongodb extends ScalaModule {
-    override def scalaVersion = main.scalaVersion
+    override def scalaVersion = poc.scalaVersion
 
     override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
       ivy"com.lihaoyi::upickle:1.1.0",
@@ -57,7 +57,7 @@ object main extends ScalaModule {
 }
 
 object example extends ScalaModule {
-  override def scalaVersion = main.scalaVersion
+  override def scalaVersion = poc.scalaVersion
 
   override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
     ivy"com.lihaoyi::cask:0.6.7",
