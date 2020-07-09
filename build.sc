@@ -14,6 +14,8 @@ object poc extends ScalaModule {
 
   override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
     ivy"com.github.javaparser:javaparser-core:3.16.1",
+    ivy"org.jacoco:org.jacoco.core:0.8.5",
+    ivy"org.jacoco:org.jacoco.report:0.8.5",
     ivy"com.lihaoyi::upickle:1.1.0",
     ivy"org.scala-lang.modules::scala-async:0.10.0",
     ivy"com.lihaoyi::os-lib:0.7.0",
