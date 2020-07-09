@@ -2,8 +2,8 @@ package poc.jacoco
 
 import java.net.Socket
 
-import org.jacoco.core.data.{ExecutionDataReader, ExecutionDataStore, SessionInfoStore}
-import org.jacoco.core.runtime.{IRemoteCommandVisitor, RemoteControlWriter}
+import org.jacoco.core.data.{ExecutionDataStore, SessionInfoStore}
+import org.jacoco.core.runtime.{IRemoteCommandVisitor, RemoteControlReader, RemoteControlWriter}
 
 import scala.util.Using
 
@@ -14,6 +14,7 @@ class JacocoClient(socket: => Socket) {
       socket => {
         val remoteControl = new RemoteControlWriter(socket.getOutputStream())
         remoteControl.visitDumpCommand(false, true)
+        remoteControl.flush()
       }
     }
   }
@@ -30,12 +31,12 @@ class JacocoClient(socket: => Socket) {
     Using.resource(socket) {
       socket => {
         val remoteControl = new RemoteControlWriter(socket.getOutputStream())
-        val reader = new ExecutionDataReader(socket.getInputStream())
+        val reader = new RemoteControlReader(socket.getInputStream())
 
         val sessionInfoStore = new SessionInfoStore()
         val execDataStore = new ExecutionDataStore()
-        reader.setExecutionDataVisitor(execDataStore)
         reader.setSessionInfoVisitor(sessionInfoStore)
+        reader.setExecutionDataVisitor(execDataStore)
 
         doWithRemote(remoteControl)
 
