@@ -70,6 +70,7 @@ object JacocoClientTest extends TestSuite {
 
       val (session1, data1) = client.grab()
       session1.getInfos.size() ==> 1
+      // since we have reset the session
       data1.getContents.size() ==> 0
 
       closeSub(sub)

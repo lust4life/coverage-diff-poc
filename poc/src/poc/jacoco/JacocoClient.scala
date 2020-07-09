@@ -12,9 +12,10 @@ class JacocoClient(socket: => Socket) {
   def reset(): Unit = {
     Using.resource(socket) {
       socket => {
+        val reader = new RemoteControlReader(socket.getInputStream())
         val remoteControl = new RemoteControlWriter(socket.getOutputStream())
         remoteControl.visitDumpCommand(false, true)
-        remoteControl.flush()
+        reader.read()
       }
     }
   }
