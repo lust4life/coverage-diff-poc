@@ -8,7 +8,7 @@ object Deps {
 }
 
 
-object poc extends ScalaModule {
+object main extends ScalaModule {
   override def scalaVersion = "2.13.3"
 
 
@@ -30,6 +30,40 @@ object poc extends ScalaModule {
   }
 
   object test extends utest
+
   object integration extends utest
+
+
+  object github extends ScalaModule {
+    override def scalaVersion = main.scalaVersion
+
+    override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
+      ivy"com.lihaoyi::requests:0.6.2",
+      ivy"org.scala-lang.modules::scala-async:0.10.0",
+      Deps.scalaReflect(scalaVersion()),
+    )
+  }
+
+  object mongodb extends ScalaModule {
+    override def scalaVersion = main.scalaVersion
+
+    override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
+      ivy"com.lihaoyi::upickle:1.1.0",
+      ivy"org.scala-lang.modules::scala-async:0.10.0",
+      Deps.scalaReflect(scalaVersion()),
+    )
+  }
+
+}
+
+object example extends ScalaModule {
+  override def scalaVersion = main.scalaVersion
+
+  override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
+    ivy"com.lihaoyi::cask:0.6.7",
+    ivy"com.lihaoyi::upickle:1.1.0",
+    ivy"org.scala-lang.modules::scala-async:0.10.0",
+    Deps.scalaReflect(scalaVersion()),
+  )
 }
 

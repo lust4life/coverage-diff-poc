@@ -2,9 +2,12 @@
     <component name="ProjectModuleManager">
         <modules>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/mill-build.iml" filepath="$PROJECT_DIR$/.idea_modules/mill-build.iml"/>
-            <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.iml"/>
-            <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.integration.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.integration.iml"/>
-            <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.test.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.test.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/example.iml" filepath="$PROJECT_DIR$/.idea_modules/example.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/main.iml" filepath="$PROJECT_DIR$/.idea_modules/main.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/main.github.iml" filepath="$PROJECT_DIR$/.idea_modules/main.github.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/main.integration.iml" filepath="$PROJECT_DIR$/.idea_modules/main.integration.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/main.mongodb.iml" filepath="$PROJECT_DIR$/.idea_modules/main.mongodb.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/main.test.iml" filepath="$PROJECT_DIR$/.idea_modules/main.test.iml"/>
         </modules>
     </component>
 </project>
