@@ -1,5 +1,7 @@
 package poc.test.somepackage;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class MockJavaData {
@@ -13,12 +15,12 @@ public abstract class MockJavaData {
     public abstract MockJavaData F3();
 
     // test generic type
-    public <N extends MockJavaData> Optional<N> F4(Optional<N> start) {
-        return start;
+    public <DataType extends MockJavaData> List<DataType> SomeGenericMethod(DataType data, Optional<DataType> openGeneric, Map<Integer, List<DataType>> info, int num, List<TestCaseEntry> closedGenericType) {
+        return info.getOrDefault(1, List.of());
     }
 
-    private class NestedClass{
-        public void F5(){
+    private class NestedClass {
+        public void F5() {
 
         }
     }

@@ -1,23 +1,41 @@
 package poc.jacoco.report
 
-import org.jacoco.core.analysis.{Analyzer, CoverageBuilder}
-import org.jacoco.core.data.{ExecutionDataStore, SessionInfoStore}
-import org.jacoco.report.IReportVisitor
+import java.io.InputStream
+
+import org.jacoco.core.analysis.{Analyzer, CoverageBuilder, IBundleCoverage}
+import org.jacoco.core.data.{ExecutionData, ExecutionDataStore, SessionInfo}
+import org.jacoco.report.{IReportVisitor, ISourceFileLocator}
+import poc.store.CoverageInfo
 
 /**
  * export execution data into coverage info format
  */
-trait CoverageInfoReport extends IReportVisitor {
-  def test(execDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
+class CoverageInfoReport {
+  def analyzeCoverage(bundleName: String,
+                      jarLocation: String,
+                      jarInputStream: InputStream,
+                      execDataStore: ExecutionDataStore): IBundleCoverage = {
     val coverageBuilder = new CoverageBuilder()
     val analyzer = new Analyzer(execDataStore, coverageBuilder)
-//    analyzer.analyzeAll("zip file for java class, or some zip file stream")
+    analyzer.analyzeAll(jarInputStream, jarLocation)
+    coverageBuilder.getBundle(bundleName)
+  }
 
-    val bundleCoverage = coverageBuilder.getBundle("bundle name")
+  def generateCoverage(): CoverageInfo = {
+    ???
+  }
+}
 
+abstract class CoverageInfoReportVisitor extends IReportVisitor {
+
+  import scala.jdk.CollectionConverters._
+
+  def generateCoverageInfo(sessionInfos: java.util.List[SessionInfo],
+                           bundleCoverage: IBundleCoverage,
+                           sourceFileLocator: ISourceFileLocator) = {
     val report: IReportVisitor = ???
-    report.visitInfo(sessionInfoStore.getInfos, execDataStore.getContents)
-//    report.visitBundle(bundleCoverage, "source file locator")
+    report.visitInfo(sessionInfos, Seq.empty.asJava)
+    report.visitBundle(bundleCoverage, sourceFileLocator)
     report.visitEnd()
   }
 }

@@ -3,6 +3,9 @@ package poc.example.javacode;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class TestCaseEntry {
 
@@ -49,5 +52,9 @@ public class TestCaseEntry {
                     break;
             }
         }
+    }
+
+    public <DataType extends TestCaseEntry> List<DataType> SomeGenericMethod(DataType data, Optional<DataType> openGeneric, Map<Integer, List<DataType>> info, int num, List<TestCaseEntry> closedGenericType) {
+        return info.getOrDefault(1, List.of());
     }
 }
