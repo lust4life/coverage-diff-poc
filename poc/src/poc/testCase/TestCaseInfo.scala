@@ -51,3 +51,9 @@ final case class AffectedMethod(signature: String) {
     codeBlocks.find(_.id == signature).forall(_.isChangedByDiff(diffFile))
   }
 }
+
+object AffectedMethod {
+  def apply(classSignature: String, methodSignature: String): AffectedMethod = {
+    this (CodeBlock.generateSignatureForMethod(classSignature, methodSignature))
+  }
+}

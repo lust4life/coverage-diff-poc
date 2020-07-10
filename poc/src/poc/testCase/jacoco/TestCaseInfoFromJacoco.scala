@@ -9,6 +9,7 @@ import org.jacoco.core.data.ExecutionDataStore
 import scala.jdk.CollectionConverters._
 import poc.jacoco.Implicits._
 import org.jacoco.report.JavaNames
+import poc.codeBlock.CodeBlock
 
 /**
  * export execution data into coverage info format
@@ -45,8 +46,9 @@ class TestCaseInfoFromJacoco {
                   val vmSignature = methodCoverage.getSignature
                   val vmMethodName = methodCoverage.getName
                   val vmClassName = classCoverage.getName
-                  val signature = javaNames.getMethodName(vmClassName, vmMethodName, vmDesc, vmSignature)
-                  AffectedMethod(signature)
+                  val methodSignature = javaNames.getMethodName(vmClassName, vmMethodName, vmDesc, vmSignature)
+                  val classSignature = javaNames.getQualifiedClassName(vmClassName)
+                  AffectedMethod(classSignature, methodSignature)
                 })
                 .toSeq
             AffectedFile(sourceFileName, methods)

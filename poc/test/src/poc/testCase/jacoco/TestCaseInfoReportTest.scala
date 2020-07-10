@@ -45,13 +45,13 @@ object TestCaseInfoFromJacocoTest extends TestSuite {
         Some(
           TestCaseInfo(bundleName, sourceCodeVersion, Seq(
             AffectedFile("TestCaseEntry.java", Seq(
-              AffectedMethod("TestCaseEntry()"),
-              AffectedMethod("TestCase1()"),
-              AffectedMethod("DoubleNumIfMoreThan5(int)"),
-              AffectedMethod("main(String[])"))),
+              AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tTestCaseEntry()"),
+              AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tTestCase1()"),
+              AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tDoubleNumIfMoreThan5(int)"),
+              AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tmain(String[])"))),
             AffectedFile("SharedLib.java", Seq(
-              AffectedMethod("DoubleNumber(Integer)"),
-              AffectedMethod("CommonLogInfo(Object)"))))))
+              AffectedMethod("poc.example.javacode.SharedLib\t#\tDoubleNumber(Integer)"),
+              AffectedMethod("poc.example.javacode.SharedLib\t#\tCommonLogInfo(Object)"))))))
     }
   }
 

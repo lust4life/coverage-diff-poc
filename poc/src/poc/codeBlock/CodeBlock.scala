@@ -23,9 +23,11 @@ final case class ClassOrInterface(filePath: String, range: BlockRange, fullQuali
 }
 
 final case class Method(container: ClassOrInterface, signature: String, range: BlockRange) extends CodeBlock {
-  override def id: String = {
-    container.id + "\t#\t" + signature
-  }
+  override def id: String = CodeBlock.generateSignatureForMethod(container.id, signature)
 
   override def filePath: String = container.filePath
+}
+
+object CodeBlock {
+  def generateSignatureForMethod(classSignature: String, methodSignature: String) = classSignature + "\t#\t" + methodSignature
 }
