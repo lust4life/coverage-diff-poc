@@ -42,7 +42,7 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
     "handle deleted file" - async {
       val filePath = "a.java"
       when(mockTestCaseResolver.retrieve(filePath))
-        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", Seq(AffectedFile(filePath, Seq.empty))))))
+        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", "", Seq(AffectedFile(filePath, Seq.empty))))))
 
       when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
 
@@ -58,7 +58,7 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
 
       // test case info's coverage is empty means a edge case, should filter empty results
       when(mockTestCaseResolver.retrieve(filePath))
-        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", Seq.empty))))
+        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", "", Seq.empty))))
 
       when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
 
@@ -74,7 +74,7 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
       val mockMethod = "a.b.c\t#\tDoSomething(Int,String)"
       val affectedMethods = Seq(AffectedMethod(mockMethod), AffectedMethod("a.b.c\t#\tanother mockMethod"))
       when(mockTestCaseResolver.retrieve(filePath))
-        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", Seq(AffectedFile(filePath, affectedMethods))))))
+        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", "", Seq(AffectedFile(filePath, affectedMethods))))))
 
       val classCodeBlock = ClassOrInterface(filePath, BlockRange(1, 40), "a.b.c")
       val method15to30 = Method(classCodeBlock, "DoSomething(Int,String)", BlockRange(15, 30))
@@ -104,7 +104,7 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
       val mockMethod = "a.b.c\t#\tDoSomething(Int,String)"
       val affectedMethods = Seq(AffectedMethod(mockMethod), AffectedMethod("a.b.c\t#\tanother mockMethod"))
       when(mockTestCaseResolver.retrieve(fromFilePath))
-        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", Seq(AffectedFile(fromFilePath, affectedMethods))))))
+        .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", "", Seq(AffectedFile(fromFilePath, affectedMethods))))))
 
       val classCodeBlock = ClassOrInterface(fromFilePath, BlockRange(1, 40), "a.b.c")
       val method15to30 = Method(classCodeBlock, "DoSomething(Int,String)", BlockRange(15, 30))

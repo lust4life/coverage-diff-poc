@@ -10,7 +10,7 @@ import poc.diff.DiffFile
  * @param id       test case identity
  * @param coverage affected files
  */
-final case class TestCaseInfo(id: String, coverage: Seq[AffectedFile]) {
+final case class TestCaseInfo(id: String, sourceCodeVersion: String, coverage: Seq[AffectedFile]) {
   def +(other: TestCaseInfo): TestCaseInfo = {
     if (id.equalsIgnoreCase(other.id)) {
       val allCoverage = coverage ++ other.coverage

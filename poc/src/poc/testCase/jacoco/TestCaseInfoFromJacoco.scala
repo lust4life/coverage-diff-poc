@@ -12,7 +12,7 @@ import poc.jacoco.Implicits._
 /**
  * export execution data into coverage info format
  */
-class TestCaseInfoReport {
+class TestCaseInfoFromJacoco {
   def analyzeCoverage(bundleName: String,
                       jarLocation: String,
                       jarInputStream: InputStream,
@@ -23,7 +23,7 @@ class TestCaseInfoReport {
     coverageBuilder.getBundle(bundleName)
   }
 
-  def generateTestCaseInfo(codeVersion: String, bundle: IBundleCoverage): Option[TestCaseInfo] = {
+  def generateTestCaseInfo(sourceCodeVersion: String, bundle: IBundleCoverage): Option[TestCaseInfo] = {
     val bundleName = bundle.getName
     val isCovered = bundle.getMethodCounter.isCovered
 
@@ -39,12 +39,15 @@ class TestCaseInfoReport {
                 .filter(_.getMethodCounter.isCovered)
                 .map(methodCoverage => {
                   val vmDesc = methodCoverage.getDesc
+                  val signature = vmDesc
+                  AffectedMethod(signature)
                 })
-
-
+                .toSeq
+            AffectedFile(sourceFileName, methods)
           })
+          .toSeq
 
-      TestCaseInfo(bundleName, codeVersion, coveredMethods)
+      TestCaseInfo(bundleName, sourceCodeVersion, coveredMethods)
     }
   }
 }

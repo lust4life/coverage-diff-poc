@@ -8,7 +8,7 @@ import scala.jdk.CollectionConverters._
 object TestCaseInfoReportTest extends TestSuite {
 
   val (sessionStore, execDataStore) = getCoverageExecData()
-  val report = new TestCaseInfoReport()
+  val report = new TestCaseInfoFromJacoco()
 
   val tests = Tests {
 

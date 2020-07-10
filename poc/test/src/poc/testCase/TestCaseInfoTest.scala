@@ -7,8 +7,8 @@ import utest._
 object TestCaseInfoTest extends TestSuite {
   val tests = Tests {
     "test case info plus with different id" - {
-      val t1 = TestCaseInfo("1", Seq(AffectedFile("a", Seq(AffectedMethod("a1")))))
-      val t2 = TestCaseInfo("2", Seq(AffectedFile("a", Seq(AffectedMethod("a1")))))
+      val t1 = TestCaseInfo("1", "", Seq(AffectedFile("a", Seq(AffectedMethod("a1")))))
+      val t2 = TestCaseInfo("2", "", Seq(AffectedFile("a", Seq(AffectedMethod("a1")))))
 
       val res = t1 + t2
       res ==> t1
@@ -19,13 +19,13 @@ object TestCaseInfoTest extends TestSuite {
       val a2 = AffectedMethod("a2")
       val b1 = AffectedMethod("a1")
       val b2 = AffectedMethod("a2")
-      val t1 = TestCaseInfo("1", Seq(AffectedFile("a", Seq(a1))))
-      val t2 = TestCaseInfo("1", Seq(AffectedFile("a", Seq(a2))))
-      val t3 = TestCaseInfo("1", Seq(AffectedFile("b", Seq(b1))))
-      val t4 = TestCaseInfo("1", Seq(AffectedFile("b", Seq(b2))))
+      val t1 = TestCaseInfo("1", "", Seq(AffectedFile("a", Seq(a1))))
+      val t2 = TestCaseInfo("1", "", Seq(AffectedFile("a", Seq(a2))))
+      val t3 = TestCaseInfo("1", "", Seq(AffectedFile("b", Seq(b1))))
+      val t4 = TestCaseInfo("1", "", Seq(AffectedFile("b", Seq(b2))))
 
       val res = t1 + t2 + t3 + t4
-      res ==> TestCaseInfo("1", Seq(AffectedFile("a", Seq(a1, a2)), AffectedFile("b", Seq(b1, b2))))
+      res ==> TestCaseInfo("1", "", Seq(AffectedFile("a", Seq(a1, a2)), AffectedFile("b", Seq(b1, b2))))
     }
 
     "affected file plus with different path" - {
