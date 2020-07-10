@@ -1,14 +1,14 @@
-package poc.jacoco.report
+package poc.testCase.jacoco
 
-import org.jacoco.core.data.{ExecutionDataReader, ExecutionDataStore, SessionInfo, SessionInfoStore}
+import org.jacoco.core.data.{ExecutionDataReader, ExecutionDataStore, SessionInfoStore}
+import poc.Implicits.fromResource
 import utest._
-import poc.Implicits._
 import scala.jdk.CollectionConverters._
 
-object CoverageInfoReportTest extends TestSuite {
+object TestCaseInfoReportTest extends TestSuite {
 
   val (sessionStore, execDataStore) = getCoverageExecData()
-  val report = new CoverageInfoReport()
+  val report = new TestCaseInfoReport()
 
   val tests = Tests {
 
