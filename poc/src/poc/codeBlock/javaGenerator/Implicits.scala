@@ -44,6 +44,8 @@ trait Implicits {
     }
 
     def getMethodBlockOrThrow(filePath: String): Method = {
+//      we can get type bound info for generic type
+//      val typeBoundForGeneric = method.getTypeParameters.getFirst.get().getTypeBound
       val signature = method.getSignature.asString()
       val container = getContainerOrThrow(filePath).getClassOrInterfaceBlockOrThrow(filePath)
       Method(container, signature, getRangeOrThrow(filePath))
