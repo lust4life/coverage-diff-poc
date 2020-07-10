@@ -8,11 +8,14 @@ import org.jacoco.core.data.ExecutionDataStore
 
 import scala.jdk.CollectionConverters._
 import poc.jacoco.Implicits._
+import org.jacoco.report.JavaNames
 
 /**
  * export execution data into coverage info format
  */
 class TestCaseInfoFromJacoco {
+  private val javaNames = new JavaNames()
+
   def analyzeCoverage(bundleName: String,
                       jarLocation: String,
                       jarInputStream: InputStream,
@@ -39,7 +42,10 @@ class TestCaseInfoFromJacoco {
                 .filter(_.getMethodCounter.isCovered)
                 .map(methodCoverage => {
                   val vmDesc = methodCoverage.getDesc
-                  val signature = vmDesc
+                  val vmSignature = methodCoverage.getSignature
+                  val vmMethodName = methodCoverage.getName
+                  val vmClassName = classCoverage.getName
+                  val signature = javaNames.getMethodName(vmClassName, vmMethodName, vmDesc, vmSignature)
                   AffectedMethod(signature)
                 })
                 .toSeq

@@ -2,17 +2,19 @@ package poc.testCase.jacoco
 
 import org.jacoco.core.data.{ExecutionDataReader, ExecutionDataStore, SessionInfoStore}
 import poc.Implicits.fromResource
+import poc.testCase.{AffectedFile, AffectedMethod, TestCaseInfo}
 import utest._
+
 import scala.jdk.CollectionConverters._
 
-object TestCaseInfoReportTest extends TestSuite {
+object TestCaseInfoFromJacocoTest extends TestSuite {
 
   val (sessionStore, execDataStore) = getCoverageExecData()
   val report = new TestCaseInfoFromJacoco()
 
   val tests = Tests {
 
-    "generate coverage info report" - {
+    "analyze coverage from exec data and jar files" - {
       val jarFileUrl = fromResource("mockservice.jar")
       val jarFilePath = jarFileUrl.getPath
       val jarFileStream = jarFileUrl.openStream()
@@ -28,6 +30,28 @@ object TestCaseInfoReportTest extends TestSuite {
       packageInfo.getName ==> "poc/example/javacode"
       val sourceFileNames = packageInfo.getSourceFiles.asScala.map(_.getName).toSeq.sorted
       sourceFileNames ==> Seq("SharedLib.java", "TestCaseEntry.java")
+    }
+
+    "generate test case info from jacoco coverage info" - {
+      val jarFileUrl = fromResource("mockservice.jar")
+      val jarFilePath = jarFileUrl.getPath
+      val jarFileStream = jarFileUrl.openStream()
+      val bundleName = "test case 1 bundle"
+      val bundle = report.analyzeCoverage(bundleName, jarFilePath, jarFileStream, execDataStore)
+      val sourceCodeVersion = "some code version"
+      val testCaseInfo = report.generateTestCaseInfo(sourceCodeVersion, bundle)
+
+      testCaseInfo ==>
+        Some(
+          TestCaseInfo(bundleName, sourceCodeVersion, Seq(
+            AffectedFile("TestCaseEntry.java", Seq(
+              AffectedMethod("TestCaseEntry()"),
+              AffectedMethod("TestCase1()"),
+              AffectedMethod("DoubleNumIfMoreThan5(int)"),
+              AffectedMethod("main(String[])"))),
+            AffectedFile("SharedLib.java", Seq(
+              AffectedMethod("DoubleNumber(Integer)"),
+              AffectedMethod("CommonLogInfo(Object)"))))))
     }
   }
 
