@@ -1,4 +1,4 @@
-package poc.example.javacode;
+package poc.example.javacode.some.inner.folder;
 
 public class SharedLib {
 

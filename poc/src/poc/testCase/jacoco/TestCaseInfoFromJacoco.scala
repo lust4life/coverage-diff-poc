@@ -37,7 +37,8 @@ class TestCaseInfoFromJacoco {
           .flatMap(_.getClasses.asScala)
           .filter(_.getMethodCounter.isCovered)
           .map(classCoverage => {
-            val sourceFileName = classCoverage.getSourceFileName
+            val packageName = classCoverage.getPackageName
+            val sourceFileName = packageName + "/" + classCoverage.getSourceFileName
             val methods =
               classCoverage.getMethods.asScala
                 .filter(_.getMethodCounter.isCovered)

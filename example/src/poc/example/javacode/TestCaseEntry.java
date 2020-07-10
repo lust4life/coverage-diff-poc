@@ -1,5 +1,7 @@
 package poc.example.javacode;
 
+import poc.example.javacode.some.inner.folder.SharedLib;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

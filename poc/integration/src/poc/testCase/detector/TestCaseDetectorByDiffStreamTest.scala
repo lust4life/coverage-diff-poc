@@ -30,20 +30,20 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
     when(mockTestCaseResolver.retrieve(any[String])).thenAnswer({
       case `sharedLibPath` => {
         Future.successful(Seq(
-          TestCaseInfo("TestCase1", Seq(
+          TestCaseInfo("TestCase1", "", Seq(
             AffectedFile(sharedLibPath, Seq(
               AffectedMethod("com.poc.SharedLib\t#\tDoubleNumber(Integer)"),
               AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)"),
             ))
           )),
-          TestCaseInfo("TestCase2", Seq(
+          TestCaseInfo("TestCase2", "", Seq(
             AffectedFile(sharedLibPath, Seq(
               AffectedMethod("com.poc.SharedLib\t#\tUseInnerClass(T)"),
               AffectedMethod("com.poc.SharedLib.InnerSharedLib\t#\tIdentity(T)"),
               AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)"),
             ))
           )),
-          TestCaseInfo("TestCase3", Seq(
+          TestCaseInfo("TestCase3", "", Seq(
             AffectedFile(sharedLibPath, Seq(
               AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)"),
             ))
@@ -52,19 +52,19 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
       }
       case `testCaseEntryPath` => {
         Future.successful(Seq(
-          TestCaseInfo("TestCase1", Seq(
+          TestCaseInfo("TestCase1", "", Seq(
             AffectedFile(testCaseEntryPath, Seq(
               AffectedMethod("com.poc.TestCaseEntry\t#\tTestCase1()"),
               AffectedMethod("com.poc.TestCaseEntry\t#\tDoubleNumIfMoreThan5(Integer)"),
             ))
           )),
-          TestCaseInfo("TestCase2", Seq(
+          TestCaseInfo("TestCase2", "", Seq(
             AffectedFile(testCaseEntryPath, Seq(
               AffectedMethod("com.poc.TestCaseEntry\t#\tTestCase2()"),
               AffectedMethod("com.poc.TestCaseEntry\t#\tDoubleNumIfMoreThan5(Integer)"),
             ))
           )),
-          TestCaseInfo("TestCase3", Seq(
+          TestCaseInfo("TestCase3", "", Seq(
             AffectedFile(testCaseEntryPath, Seq(
               AffectedMethod("com.poc.TestCaseEntry\t#\tTestCase3()"),
             ))

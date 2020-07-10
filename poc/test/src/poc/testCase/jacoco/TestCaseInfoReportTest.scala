@@ -21,15 +21,18 @@ object TestCaseInfoFromJacocoTest extends TestSuite {
       val bundleName = "test case 1 bundle"
       val bundle = report.analyzeCoverage(bundleName, jarFilePath, jarFileStream, execDataStore)
 
-      bundle.getPackages.size() ==> 1
       bundle.getName ==> bundleName
-      bundle.getClassCounter.getTotalCount ==> 3
+      bundle.getPackages.size() ==> 2
+      bundle.getClassCounter.getTotalCount ==> 4
       bundle.getClassCounter.getCoveredCount ==> 2
 
-      val packageInfo = bundle.getPackages.asScala.head
-      packageInfo.getName ==> "poc/example/javacode"
-      val sourceFileNames = packageInfo.getSourceFiles.asScala.map(_.getName).toSeq.sorted
-      sourceFileNames ==> Seq("SharedLib.java", "TestCaseEntry.java")
+      val sourceFileNames =
+        bundle.getPackages.asScala
+          .flatMap(_.getSourceFiles.asScala.map(_.getName))
+          .toSeq
+          .sorted
+
+      sourceFileNames ==> Seq("SharedLib.java", "Test.java", "TestCaseEntry.java")
     }
 
     "generate test case info from jacoco coverage info" - {
@@ -44,14 +47,14 @@ object TestCaseInfoFromJacocoTest extends TestSuite {
       testCaseInfo ==>
         Some(
           TestCaseInfo(bundleName, sourceCodeVersion, Seq(
-            AffectedFile("TestCaseEntry.java", Seq(
+            AffectedFile("poc/example/javacode/TestCaseEntry.java", Seq(
               AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tTestCaseEntry()"),
               AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tTestCase1()"),
               AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tDoubleNumIfMoreThan5(int)"),
               AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tmain(String[])"))),
-            AffectedFile("SharedLib.java", Seq(
-              AffectedMethod("poc.example.javacode.SharedLib\t#\tDoubleNumber(Integer)"),
-              AffectedMethod("poc.example.javacode.SharedLib\t#\tCommonLogInfo(Object)"))))))
+            AffectedFile("poc/example/javacode/some/inner/folder/SharedLib.java", Seq(
+              AffectedMethod("poc.example.javacode.some.inner.folder.SharedLib\t#\tDoubleNumber(Integer)"),
+              AffectedMethod("poc.example.javacode.some.inner.folder.SharedLib\t#\tCommonLogInfo(Object)"))))))
     }
   }
 
