@@ -37,6 +37,8 @@ object poc extends ScalaModule {
 
 
   object github extends ScalaModule {
+    override def moduleDeps: Seq[JavaModule] = Seq(poc)
+
     override def scalaVersion = poc.scalaVersion
 
     override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
@@ -44,6 +46,11 @@ object poc extends ScalaModule {
       ivy"org.scala-lang.modules::scala-async:0.10.0",
       Deps.scalaReflect(scalaVersion()),
     )
+
+    object test extends utest{
+      override def moduleDeps: Seq[JavaModule] = github +: super.moduleDeps
+    }
+
   }
 
   object mongodb extends ScalaModule {
