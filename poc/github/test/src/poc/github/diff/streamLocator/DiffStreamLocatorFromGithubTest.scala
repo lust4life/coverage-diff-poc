@@ -22,11 +22,11 @@ object DiffStreamLocatorFromGithubTest extends TestSuite {
     }
 
     "get diff from github pull request" - {
-      val pullRequestId = 1
+      val pullRequestId = 2
       val diffStream = diffFromGithub.getDiffStreamByPullRequest(pullRequestId)
       val diffLines = Source.fromInputStream(diffStream).getLines().toSeq
 
-      diffLines.length ==> 10
+      diffLines.length ==> 13
     }
   }
 }
