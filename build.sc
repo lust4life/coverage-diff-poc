@@ -47,7 +47,7 @@ object poc extends ScalaModule {
       Deps.scalaReflect(scalaVersion()),
     )
 
-    object test extends utest{
+    object test extends utest {
       override def moduleDeps: Seq[JavaModule] = github +: super.moduleDeps
     }
 
@@ -68,10 +68,13 @@ object poc extends ScalaModule {
 object example extends ScalaModule {
   override def scalaVersion = poc.scalaVersion
 
+  override def moduleDeps: Seq[JavaModule] = Seq(poc, poc.github)
+
   override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
     ivy"com.lihaoyi::cask:0.6.7",
     ivy"com.lihaoyi::upickle:1.1.0",
     ivy"org.scala-lang.modules::scala-async:0.10.0",
+    ivy"com.lihaoyi::os-lib:0.7.0",
     Deps.scalaReflect(scalaVersion()),
   )
 }
