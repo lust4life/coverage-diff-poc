@@ -13,6 +13,7 @@ public class SharedLib {
     }
 
     public static <T> void CommonLogInfo(T data) {
+        System.out.println("-----------log----------");
         System.out.println(data);
     }
 
