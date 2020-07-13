@@ -1,5 +1,5 @@
 package poc.diff
-package jsonGenerator
+package parser
 
 import java.io.InputStream
 
@@ -7,13 +7,13 @@ import ujson.Value
 
 import scala.collection.mutable
 
-class DiffGeneratorByDiffJson extends DiffGenerator {
+class DiffParserByDiffJson extends DiffParser {
   /**
    * 解析 diff，生成 diff-result
    *
    * @return
    */
-  override def generate(in: InputStream): Seq[DiffFile] = {
+  override def parse(in: InputStream): Seq[DiffFile] = {
     val json = ujson.read(in)
     json.arr.map(f = x => {
       val file = x.obj

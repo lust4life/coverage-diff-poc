@@ -1,4 +1,4 @@
-package poc.diff.jsonGenerator
+package poc.diff.parser
 
 import poc.diff.{Changed, Rename}
 import utest._
@@ -6,15 +6,15 @@ import poc.Implicits._
 
 import scala.collection.Set
 
-object DiffGeneratorByDiffJsonTest extends TestSuite {
-  val diffParser = new DiffGeneratorByDiffJson
+object DiffParserByDiffJsonTest extends TestSuite {
+  val diffParser = new DiffParserByDiffJson
 
   val tests = Tests {
 
     "parse diff json file" - {
 
       val in = fromResource("diff.json").openStream()
-      val res = diffParser.generate(in)
+      val res = diffParser.parse(in)
 
       val resLen = res.length
       resLen ==> 4

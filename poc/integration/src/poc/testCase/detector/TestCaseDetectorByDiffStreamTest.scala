@@ -6,7 +6,7 @@ import poc.Implicits._
 import poc.codeBlock.javaGenerator.JavaBlockGenerator
 import poc.codeBlock.{CodeBlockFilePathResolver, CodeBlockGeneratorByFilePath}
 import poc.diff.JavaDiffFilter
-import poc.diff.jsonGenerator.{DiffGeneratorByDiffJson, DiffGeneratorByUnifiedDiff}
+import poc.diff.parser.DiffParserByUnifiedDiff
 import poc.testCase.{AffectedFile, AffectedMethod, FileChanged, TestCaseChangedInfo, TestCaseInfo, TestCaseResolver, TestCaseResolverByDiff}
 import utest._
 
@@ -22,7 +22,8 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
     val mockCodeBlockFilePathResolver = mock[CodeBlockFilePathResolver]
     val codeBlockGenerator = new CodeBlockGeneratorByFilePath(new JavaBlockGenerator, mockCodeBlockFilePathResolver)
     val testCaseDetector = new TestCaseDetectorByCodeBlock(codeBlockGenerator, testCaseResolverByDiff)
-    val detectorByDiffStream = new TestCaseDetectorByDiffStream(new DiffGeneratorByUnifiedDiff, testCaseDetector)
+
+    val detectByDiffStream = ((new DiffParserByUnifiedDiff).parse(_)) andThen testCaseDetector.detect
 
     when(mockTestCaseResolver.retrieve(anySeq)).thenCallRealMethod()
     val sharedLibPath = "src/main/java/com/poc/SharedLib.java"
@@ -80,7 +81,7 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
     "change testcase 1" - async {
       val in = fromResource("testcase.1.diff").openStream()
       val testCaseChangedInfos = await {
-        detectorByDiffStream.detect(in)
+        detectByDiffStream(in)
       }
       in.close()
 
@@ -94,7 +95,7 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
     "change testcase 2" - async {
       val in = fromResource("testcase.2.diff").openStream()
       val testCaseChangedInfos = await {
-        detectorByDiffStream.detect(in)
+        detectByDiffStream(in)
       }
       in.close()
 
@@ -108,7 +109,7 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
     "change testcase 1 and 2" - async {
       val in = fromResource("testcase.1.2.diff").openStream()
       val testCaseChangedInfos = await {
-        detectorByDiffStream.detect(in)
+        detectByDiffStream(in)
       }
       in.close()
 
@@ -126,7 +127,7 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
     "change testcase 1 and 2 and 3" - async {
       val in = fromResource("testcase.1.2.3.diff").openStream()
       val testCaseChangedInfos = await {
-        detectorByDiffStream.detect(in)
+        detectByDiffStream(in)
       }
       in.close()
 

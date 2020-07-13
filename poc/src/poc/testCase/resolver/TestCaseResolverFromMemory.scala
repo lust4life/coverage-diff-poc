@@ -1,10 +1,11 @@
 package poc.testCase.resolver
 
+import poc.testCase.store.TestCaseMemoryStore
 import poc.testCase.{TestCaseInfo, TestCaseResolver}
 
 import scala.concurrent.Future
 
-class TestCaseResolverFromDb extends TestCaseResolver {
+class TestCaseResolverFromMemory(testCaseMemoryStore: TestCaseMemoryStore) extends TestCaseResolver {
   /**
    * retrieve a test case info by a file path
    *

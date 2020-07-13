@@ -5,11 +5,10 @@ import java.io.InputStream
 
 import org.jacoco.core.analysis.{Analyzer, CoverageBuilder, IBundleCoverage}
 import org.jacoco.core.data.ExecutionDataStore
+import org.jacoco.report.JavaNames
+import poc.jacoco.Implicits._
 
 import scala.jdk.CollectionConverters._
-import poc.jacoco.Implicits._
-import org.jacoco.report.JavaNames
-import poc.codeBlock.CodeBlock
 
 /**
  * export execution data into coverage info format

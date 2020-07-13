@@ -2,11 +2,11 @@ package poc.diff
 
 import java.io.InputStream
 
-trait DiffGenerator {
+trait DiffParser {
   /**
    * 解析 diff，生成 diff-result
    *
    * @return
    */
-  def generate(in: InputStream): Seq[DiffFile]
+  def parse(in: InputStream): Seq[DiffFile]
 }
