@@ -12,7 +12,7 @@ object TestCaseResolverFromMemoryTest extends TestSuite {
 
   val tests = Tests {
     val testCaseStore = new TestCaseMemoryStore()
-    val resolver = new TestCaseResolverFromMemory(testCaseStore)
+    val resolver = new TestCaseResolverFromMemory("", testCaseStore)
 
     "get test case from memory store" - async {
       val testCase1 = TestCaseInfo("1", "some version", Seq(

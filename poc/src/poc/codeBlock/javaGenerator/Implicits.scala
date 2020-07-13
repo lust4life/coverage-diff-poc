@@ -4,6 +4,8 @@ package javaGenerator
 import com.github.javaparser.Range
 import com.github.javaparser.ast.body.{ClassOrInterfaceDeclaration, MethodDeclaration}
 
+import scala.jdk.CollectionConverters._
+
 object Implicits extends Implicits
 
 trait Implicits {
@@ -44,9 +46,23 @@ trait Implicits {
     }
 
     def getMethodBlockOrThrow(filePath: String): Method = {
-//      we can get type bound info for generic type
-//      val typeBoundForGeneric = method.getTypeParameters.getFirst.get().getTypeBound
-      val signature = method.getSignature.asString()
+      val methodName = method.getName.asString()
+      val typeParameters = method.getTypeParameters.asScala
+      val parameterTypeNames =
+        method.getSignature
+          .getParameterTypes.asScala
+          .map(parameterType => {
+            var typeName = parameterType.asString()
+            parameterType.ifClassOrInterfaceType(classParameterType => {
+              typeParameters
+                .find(typeParameter => typeParameter.getName == classParameterType.getName)
+                .map(x => x.getTypeBound.asScala.map(_.getName.asString()).headOption)
+                .foreach(x => typeName = x.getOrElse("Object"))
+            })
+            typeName
+          })
+
+      val signature = parameterTypeNames.mkString(s"$methodName(", ", ", ")")
       val container = getContainerOrThrow(filePath).getClassOrInterfaceBlockOrThrow(filePath)
       Method(container, signature, getRangeOrThrow(filePath))
     }

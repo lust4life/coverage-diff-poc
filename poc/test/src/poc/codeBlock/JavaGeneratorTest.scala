@@ -48,7 +48,7 @@ object JavaGeneratorTest extends TestSuite {
 
       val m4 = resSeq(3)
       assertMatch(m4) {
-        case Method(`mockJavaData`, "SomeGenericMethod(DataType, Optional, Map, int, List)", BlockRange(18, 20)) =>
+        case Method(`mockJavaData`, "SomeGenericMethod(Object, MockJavaData, Optional, Map, int, List)", BlockRange(18, 20)) =>
       }
 
       val m5 = resSeq(4)
