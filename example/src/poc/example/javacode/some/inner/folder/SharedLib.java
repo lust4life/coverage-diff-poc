@@ -9,7 +9,7 @@ public class SharedLib {
 
     public static Integer DoubleNumber(Integer num) {
         CommonLogInfo(num);
-        return num * 2;
+        return num * 3;
     }
 
     public static <T> void CommonLogInfo(T data) {
