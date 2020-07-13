@@ -5,7 +5,7 @@ import poc.testCase.{TestCaseInfo, TestCaseResolver}
 
 import scala.concurrent.Future
 
-class TestCaseResolverFromMemory(testCaseMemoryStore: TestCaseMemoryStore = new TestCaseMemoryStore())
+class TestCaseResolverFromMemory(packageRootPrefix: String, testCaseMemoryStore: TestCaseMemoryStore = new TestCaseMemoryStore())
   extends TestCaseResolver {
 
   /**
@@ -18,7 +18,15 @@ class TestCaseResolverFromMemory(testCaseMemoryStore: TestCaseMemoryStore = new 
     val infos =
       testCaseMemoryStore.store
         .filter(testCase => {
-          testCase.coverage.exists(_.filePath.equalsIgnoreCase(filePath))
+          testCase.coverage.exists(_.filePath.equalsIgnoreCase(filePath.stripPrefix(packageRootPrefix)))
+        })
+        .map(testCaseInfo => {
+          val affectedFilesWithPrefixPath =
+            testCaseInfo.coverage.map(affectedFile => {
+              val filePathWithPrefix = packageRootPrefix + affectedFile.filePath
+              affectedFile.copy(filePath = filePathWithPrefix)
+            })
+          testCaseInfo.copy(coverage = affectedFilesWithPrefixPath)
         })
         .toSeq
     Future.successful(infos)

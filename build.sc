@@ -1,6 +1,7 @@
 import mill._
 import mill.api.Loose
 import mill.define.Target
+import poc.utest
 import scalalib._
 
 object Deps {
@@ -77,5 +78,11 @@ object example extends ScalaModule {
     ivy"com.lihaoyi::os-lib:0.7.0",
     Deps.scalaReflect(scalaVersion()),
   )
+
+
+  object test extends utest {
+    override def moduleDeps: Seq[JavaModule] = example +: super.moduleDeps
+  }
+
 }
 
