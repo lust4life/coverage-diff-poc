@@ -55,8 +55,5 @@ public class TestCaseEntry {
             }
         }
     }
-
-    public <DataType extends TestCaseEntry> List<DataType> SomeGenericMethod(DataType data, Optional<DataType> openGeneric, Map<Integer, List<DataType>> info, int num, List<TestCaseEntry> closedGenericType) {
-        return info.getOrDefault(1, List.of());
-    }
+    
 }

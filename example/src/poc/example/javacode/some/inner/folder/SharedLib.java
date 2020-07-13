@@ -17,6 +17,10 @@ public class SharedLib {
     }
 
 
+    public static <T> void AddSomeMethod(T data) {
+        System.out.println(data);
+    }
+
     /**
      * InnerBar
      */
