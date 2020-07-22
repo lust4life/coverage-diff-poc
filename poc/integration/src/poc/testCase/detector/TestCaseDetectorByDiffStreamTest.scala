@@ -34,19 +34,19 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
           TestCaseInfo("TestCase1", "", Seq(
             AffectedFile(sharedLibPath, Seq(
               AffectedMethod("com.poc.SharedLib\t#\tDoubleNumber(Integer)"),
-              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)"),
+              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(Object)"),
             ))
           )),
           TestCaseInfo("TestCase2", "", Seq(
             AffectedFile(sharedLibPath, Seq(
-              AffectedMethod("com.poc.SharedLib\t#\tUseInnerClass(T)"),
-              AffectedMethod("com.poc.SharedLib.InnerSharedLib\t#\tIdentity(T)"),
-              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)"),
+              AffectedMethod("com.poc.SharedLib\t#\tUseInnerClass(Object)"),
+              AffectedMethod("com.poc.SharedLib.InnerSharedLib\t#\tIdentity(Object)"),
+              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(Object)"),
             ))
           )),
           TestCaseInfo("TestCase3", "", Seq(
             AffectedFile(sharedLibPath, Seq(
-              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(T)"),
+              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(Object)"),
             ))
           ))
         ))
@@ -103,7 +103,7 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
       testCaseChangedInfos ==> Seq(
         TestCaseChangedInfo("TestCase2", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib.InnerSharedLib\t#\tIdentity(T)")))))
+            "com.poc.SharedLib.InnerSharedLib\t#\tIdentity(Object)")))))
     }
 
     "change testcase 1 and 2" - async {
@@ -135,15 +135,15 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
       testCaseChangedInfos.sortBy(_.id) ==> Seq(
         TestCaseChangedInfo("TestCase1", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib\t#\tCommonLogInfo(T)")))),
+            "com.poc.SharedLib\t#\tCommonLogInfo(Object)")))),
 
         TestCaseChangedInfo("TestCase2", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib\t#\tCommonLogInfo(T)")))),
+            "com.poc.SharedLib\t#\tCommonLogInfo(Object)")))),
 
         TestCaseChangedInfo("TestCase3", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib\t#\tCommonLogInfo(T)")))))
+            "com.poc.SharedLib\t#\tCommonLogInfo(Object)")))))
     }
   }
 }
