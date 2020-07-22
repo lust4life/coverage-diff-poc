@@ -22,7 +22,5 @@ jobs:
     - name: Codecov
       uses: codecov/codecov-action@v1.0.11
       with:
-        # Repository upload token - get it from codecov.io. Required only for private repositories
-        token: 9e9401d8-ef52-4d2c-b503-0dba686d3082
         # Specify whether or not CI build should fail if Codecov runs into an error during upload
         fail_ci_if_error: true
