@@ -20,7 +20,7 @@ jobs:
       with:
         java-version: 13
     - name: Install diff2html cli
-    - run:  sudo npm i -g diff2html-cli
+      run:  sudo npm i -g diff2html-cli
     - name: Run tests
       run:  ./mill -i __.__.test
     - name: Generate coverage report
