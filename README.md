@@ -1,4 +1,5 @@
 ![Scala CI](https://github.com/lust4life/coverage-diff-poc/workflows/Scala%20CI/badge.svg)
+[![codecov](https://codecov.io/gh/lust4life/coverage-diff-poc/branch/master/graph/badge.svg)](https://codecov.io/gh/lust4life/coverage-diff-poc)
 ====
 
 # pre-requirement
