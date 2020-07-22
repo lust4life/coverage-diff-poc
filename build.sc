@@ -3,18 +3,20 @@ import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 import mill._
 import mill.api.Loose
 import mill.define.Target
-import poc.utest
 import scalalib._
 import mill.contrib.scoverage.ScoverageModule
 
 object Deps {
   def scalaReflect(scalaVersion: String) = ivy"org.scala-lang:scala-reflect:${scalaVersion}"
+
+  val utest = ivy"com.lihaoyi::utest::0.7.4"
+  val mockito = ivy"org.mockito::mockito-scala:1.14.8"
 }
 
-object poc extends ScoverageModule {
+object poc extends ScalaModule with ScoverageModule {
   override def scalaVersion = "2.13.3"
 
-  override def scoverageVersion= "1.4.1"
+  override def scoverageVersion = "1.4.1"
 
   override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
     ivy"com.github.javaparser:javaparser-core:3.16.1",
@@ -30,8 +32,8 @@ object poc extends ScoverageModule {
     def testFrameworks = Seq("utest.runner.Framework")
 
     override def ivyDeps = Agg(
-      ivy"com.lihaoyi::utest::0.7.4",
-      ivy"org.mockito::mockito-scala:1.14.8",
+      Deps.utest,
+      Deps.mockito,
     )
   }
 
@@ -42,7 +44,9 @@ object poc extends ScoverageModule {
 
   object github extends ScoverageModule {
     override def moduleDeps: Seq[JavaModule] = Seq(poc)
-    override def scoverageVersion= "1.4.1"
+
+    override def scoverageVersion = "1.4.1"
+
     override def scalaVersion = poc.scalaVersion
 
     override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
@@ -51,8 +55,13 @@ object poc extends ScoverageModule {
       Deps.scalaReflect(scalaVersion()),
     )
 
-    object test extends utest {
-      override def moduleDeps: Seq[JavaModule] = github +: super.moduleDeps
+    object test extends ScoverageTests {
+      def testFrameworks = Seq("utest.runner.Framework")
+
+      override def ivyDeps = Agg(
+        Deps.utest,
+        Deps.mockito,
+      )
     }
 
   }
@@ -82,9 +91,12 @@ object example extends ScalaModule {
     Deps.scalaReflect(scalaVersion()),
   )
 
+  object test extends Tests {
+    def testFrameworks = Seq("utest.runner.Framework")
 
-  object test extends utest {
-    override def moduleDeps: Seq[JavaModule] = example +: super.moduleDeps
+    override def ivyDeps = Agg(
+      Deps.utest,
+    )
   }
 
 }

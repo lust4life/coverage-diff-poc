@@ -6,9 +6,11 @@
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/example.test.iml" filepath="$PROJECT_DIR$/.idea_modules/example.test.iml"/>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.iml"/>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.github.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.github.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.github.scoverage.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.github.scoverage.iml"/>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.github.test.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.github.test.iml"/>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.integration.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.integration.iml"/>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.mongodb.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.mongodb.iml"/>
+            <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.scoverage.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.scoverage.iml"/>
             <module fileurl="file://$PROJECT_DIR$/.idea_modules/poc.test.iml" filepath="$PROJECT_DIR$/.idea_modules/poc.test.iml"/>
         </modules>
     </component>

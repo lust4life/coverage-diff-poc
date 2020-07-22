@@ -1,8 +1,28 @@
 <project version="4">
     <component name="ScalaCompilerConfiguration">
-        <profile name="mill 1" modules="poc.github,poc,example.test,example,poc.github.test,poc.mongodb,poc.integration,poc.test">
+        <profile name="mill 1" modules="poc.github.scoverage">
+            <parameters>
+                <parameter value="-P:scoverage:dataDir:/Users/jiajun.qian/git/jacoco/coverage-diff-poc/out/poc/github/scoverage/data/dest"/>
+            </parameters>
+            <plugins>
+                <plugin path="/Users/jiajun.qian/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scoverage/scalac-scoverage-plugin_2.13/1.4.1/scalac-scoverage-plugin_2.13-1.4.1.jar"/>
+                <plugin path="/Users/jiajun.qian/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.3/scala-library-2.13.3.jar"/>
+                <plugin path="/Users/jiajun.qian/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.13/1.2.0/scala-xml_2.13-1.2.0.jar"/>
+            </plugins>
+        </profile>
+        <profile name="mill 2" modules="poc,example.test,example,poc.github,poc.github.test,poc.mongodb,poc.integration,poc.test">
             <parameters> </parameters>
             <plugins> </plugins>
+        </profile>
+        <profile name="mill 3" modules="poc.scoverage">
+            <parameters>
+                <parameter value="-P:scoverage:dataDir:/Users/jiajun.qian/git/jacoco/coverage-diff-poc/out/poc/scoverage/data/dest"/>
+            </parameters>
+            <plugins>
+                <plugin path="/Users/jiajun.qian/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scoverage/scalac-scoverage-plugin_2.13/1.4.1/scalac-scoverage-plugin_2.13-1.4.1.jar"/>
+                <plugin path="/Users/jiajun.qian/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.3/scala-library-2.13.3.jar"/>
+                <plugin path="/Users/jiajun.qian/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.13/1.2.0/scala-xml_2.13-1.2.0.jar"/>
+            </plugins>
         </profile>
     </component>
 </project>
