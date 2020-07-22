@@ -1,17 +1,20 @@
+import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
+
 import mill._
 import mill.api.Loose
 import mill.define.Target
 import poc.utest
 import scalalib._
+import mill.contrib.scoverage.ScoverageModule
 
 object Deps {
   def scalaReflect(scalaVersion: String) = ivy"org.scala-lang:scala-reflect:${scalaVersion}"
 }
 
-
-object poc extends ScalaModule {
+object poc extends ScoverageModule {
   override def scalaVersion = "2.13.3"
 
+  override def scoverageVersion= "1.4.1"
 
   override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
     ivy"com.github.javaparser:javaparser-core:3.16.1",
@@ -23,7 +26,7 @@ object poc extends ScalaModule {
     Deps.scalaReflect(scalaVersion()),
   )
 
-  trait utest extends Tests {
+  trait utest extends ScoverageTests {
     def testFrameworks = Seq("utest.runner.Framework")
 
     override def ivyDeps = Agg(
@@ -37,9 +40,9 @@ object poc extends ScalaModule {
   object integration extends utest
 
 
-  object github extends ScalaModule {
+  object github extends ScoverageModule {
     override def moduleDeps: Seq[JavaModule] = Seq(poc)
-
+    override def scoverageVersion= "1.4.1"
     override def scalaVersion = poc.scalaVersion
 
     override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
