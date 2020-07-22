@@ -1,3 +1,6 @@
+![Scala CI](https://github.com/lust4life/coverage-diff-poc/workflows/Scala%20CI/badge.svg)
+====
+
 # pre-requirement
 
 - https://www.npmjs.com/package/diff2html-cli
