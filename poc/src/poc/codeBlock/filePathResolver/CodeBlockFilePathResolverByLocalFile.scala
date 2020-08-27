@@ -1,12 +1,11 @@
 package poc.codeBlock
 package filePathResolver
 
-import java.io.InputStream
-import java.nio.file.{Files, Paths}
+import java.io.{File, FileInputStream, InputStream}
 
 
-class CodeBlockFilePathResolverByLocalFile(basedir: String) extends CodeBlockFilePathResolver {
+class CodeBlockFilePathResolverByLocalFile(basedir: File) extends CodeBlockFilePathResolver {
   override def getStream(filePath: String): InputStream = {
-    Files.newInputStream(Paths.get(basedir, filePath))
+    new FileInputStream(new File(basedir, filePath))
   }
 }

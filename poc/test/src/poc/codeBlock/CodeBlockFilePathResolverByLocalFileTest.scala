@@ -7,15 +7,16 @@ import scala.io.Source
 
 object CodeBlockFilePathResolverByLocalFileTest extends TestSuite {
 
-  val filePathResolver = new CodeBlockFilePathResolverByLocalFile
+  val tempDir = os.temp.dir()
+  val filePathResolver = new CodeBlockFilePathResolverByLocalFile(tempDir.toIO)
 
   val tests = Tests {
 
     "should read from local file" - {
-      val fileUrl = getClass.getClassLoader.getResource("Invalid.java")
-
-      val in = filePathResolver.getStream(fileUrl.getPath)
-      Source.fromInputStream(in).mkString ==> "some data"
+      val filePath = "hello"
+      os.write(tempDir / filePath, "world")
+      val in = filePathResolver.getStream(filePath)
+      Source.fromInputStream(in).mkString ==> "world"
     }
   }
 }

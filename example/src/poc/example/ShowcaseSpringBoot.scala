@@ -27,7 +27,7 @@ import scala.concurrent.duration.Duration
 
 object ShowcaseSpringBoot extends cask.MainRoutes {
   val jarLocationUrl = fromResource("aService-0.0.1-SNAPSHOT.jar")
-  val gitTool = GitTool("/tmp/show-case-example", "https://github.com/lust4life/coverage-diff-poc")
+  val gitTool = GitTool(new File("/tmp/show-case-example"), "https://github.com/lust4life/coverage-diff-poc")
   val diffParser = new DiffParserByUnifiedDiff()
   val diffStreamLocatorFromGit = new DiffStreamLocatorFromGit(gitTool)
 
@@ -44,7 +44,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   var memoryReportOutput = new MemoryMultiReportOutput
 
   @memoryFiles("/coverage")
-  def staticFileRoutes() = memoryReportOutput
+  def staticFileRoutes() = memoryReportOutput.files.toMap
 
   @cask.post("/export-coverage")
   def exportCoverage(path: String) = {
@@ -61,8 +61,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
     // git clone code into some directory
     gitTool.ensureRepoCloned()
 
-    val sourceCodeDir = new File(gitTool.repoDir)
-    val sourceFileLocator = new DirectorySourceFileLocator(sourceCodeDir, "UTF-8", 2)
+    val sourceFileLocator = new DirectorySourceFileLocator(gitTool.repoDir, "UTF-8", 2)
     val tmpMemoryOutput = new MemoryMultiReportOutput
     JacocoUtils.exportToHtml("whole-coverage",
       tmpMemoryOutput,
@@ -118,6 +117,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   @cask.get("/show-coverage-changed-info/compare/:base/:target")
   def showCoverageChangedInfo(base: String, target: String) = {
     gitTool.ensureRepoCloned()
+    gitTool.resetTo(target)
 
     val diffStream = diffStreamLocatorFromGit.getDiffStream(base, target)
     detectByDiffStream(diffStream)

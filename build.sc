@@ -31,6 +31,8 @@ object poc extends ScalaModule with ScoverageModule {
   trait utest extends ScoverageTests {
     def testFrameworks = Seq("utest.runner.Framework")
 
+    override def moduleDeps: Seq[JavaModule] = Seq(poc) ++ super.moduleDeps
+
     override def ivyDeps = Agg(
       Deps.utest,
       Deps.mockito,

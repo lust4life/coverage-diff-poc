@@ -2,6 +2,7 @@ package poc.testCase.jacoco
 
 import org.jacoco.core.data.{ExecutionDataReader, ExecutionDataStore, SessionInfoStore}
 import poc.Implicits.fromResource
+import poc.jacoco.JacocoUtils
 import poc.testCase.{AffectedFile, AffectedMethod, TestCaseInfo}
 import utest._
 
@@ -19,7 +20,7 @@ object TestCaseInfoFromJacocoTest extends TestSuite {
       val jarFilePath = jarFileUrl.getPath
       val jarFileStream = jarFileUrl.openStream()
       val bundleName = "test case 1 bundle"
-      val bundle = report.analyzeCoverage(bundleName, jarFilePath, jarFileStream, execDataStore)
+      val bundle = JacocoUtils.analyzeCoverage(bundleName, jarFilePath, jarFileStream, execDataStore)
 
       bundle.getName ==> bundleName
       bundle.getPackages.size() ==> 2
@@ -40,7 +41,7 @@ object TestCaseInfoFromJacocoTest extends TestSuite {
       val jarFilePath = jarFileUrl.getPath
       val jarFileStream = jarFileUrl.openStream()
       val bundleName = "test case 1 bundle"
-      val bundle = report.analyzeCoverage(bundleName, jarFilePath, jarFileStream, execDataStore)
+      val bundle = JacocoUtils.analyzeCoverage(bundleName, jarFilePath, jarFileStream, execDataStore)
       val sourceCodeVersion = "some code version"
       val testCaseInfo = report.generateTestCaseInfo(sourceCodeVersion, bundle)
 
