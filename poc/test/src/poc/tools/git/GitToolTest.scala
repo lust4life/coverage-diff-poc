@@ -29,7 +29,7 @@ object GitToolTest extends TestSuite {
       val tmp = os.temp.dir()
       val gitTool = GitTool(tmp.toIO, pwd.toString())
       gitTool.ensureRepoCloned()
-      gitTool.resetTo("dfcf215")
+      gitTool.resetTo("dfcf215804c508e3a3e2abfec191f18aea9eb39e")
       os.list(tmp, false).length ==> 4
     }
 
@@ -47,10 +47,10 @@ object GitToolTest extends TestSuite {
       val tmp = os.temp.dir()
       val gitTool = GitTool(tmp.toIO, pwd.toString())
       gitTool.ensureRepoCloned()
-      var res = gitTool.diff("head", "head")
+      var res = gitTool.diff("master", "master")
       res.out.bytes.length ==> 0
 
-      res = gitTool.diff("head~1", "head")
+      res = gitTool.diff("master~1", "master")
       assert(res.out.bytes.length > 0)
     }
   }
