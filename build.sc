@@ -1,5 +1,4 @@
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
-
 import mill._
 import mill.api.Loose
 import mill.define.Target
@@ -31,7 +30,7 @@ object poc extends ScalaModule with ScoverageModule {
   trait utest extends ScoverageTests {
     def testFrameworks = Seq("utest.runner.Framework")
 
-    override def moduleDeps: Seq[JavaModule] = Seq(poc) ++ super.moduleDeps
+    override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(poc)
 
     override def ivyDeps = Agg(
       Deps.utest,
