@@ -1,10 +1,7 @@
 package poc.testCase
 package jacoco
 
-import java.io.InputStream
-
-import org.jacoco.core.analysis.{Analyzer, CoverageBuilder, IBundleCoverage}
-import org.jacoco.core.data.ExecutionDataStore
+import org.jacoco.core.analysis.IBundleCoverage
 import org.jacoco.report.JavaNames
 import poc.jacoco.Implicits._
 
@@ -15,16 +12,6 @@ import scala.jdk.CollectionConverters._
  */
 class TestCaseInfoFromJacoco {
   private val javaNames = new JavaNames()
-
-  def analyzeCoverage(bundleName: String,
-                      jarLocation: String,
-                      jarInputStream: InputStream,
-                      execDataStore: ExecutionDataStore): IBundleCoverage = {
-    val coverageBuilder = new CoverageBuilder()
-    val analyzer = new Analyzer(execDataStore, coverageBuilder)
-    analyzer.analyzeAll(jarInputStream, jarLocation)
-    coverageBuilder.getBundle(bundleName)
-  }
 
   def generateTestCaseInfo(sourceCodeVersion: String, bundle: IBundleCoverage): Option[TestCaseInfo] = {
     val bundleName = bundle.getName

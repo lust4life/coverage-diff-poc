@@ -10,6 +10,7 @@ import poc.diff.parser.DiffParserByUnifiedDiff
 import poc.github.GithubRepo
 import poc.github.codeBlock.filePathResolver.CodeBlockFilePathResolverFromGithub
 import poc.github.diff.streamLocator.DiffStreamLocatorFromGithub
+import poc.jacoco.JacocoUtils
 import poc.testCase._
 import poc.testCase.detector.TestCaseDetectorByCodeBlock
 import poc.testCase.jacoco.TestCaseInfoFromJacoco
@@ -52,7 +53,7 @@ object Showcase extends cask.MainRoutes {
     val testCaseName = s"test-case-$id"
     val jarLocation = utils.mockServiceUrl.getPath
     val jarFileStream = utils.mockServiceUrl.openStream()
-    val bundle = testCaseInfoFromJacoco.analyzeCoverage(testCaseName, jarLocation, jarFileStream, execData)
+    val bundle = JacocoUtils.analyzeCoverage(testCaseName, jarLocation, jarFileStream, execData)
     testCaseInfoFromJacoco.generateTestCaseInfo("master", bundle)
       .map(testCaseMemoryStore.save)
       .foreach(Await.result(_, Duration.Inf))
