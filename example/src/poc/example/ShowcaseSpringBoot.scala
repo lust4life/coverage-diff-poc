@@ -13,6 +13,7 @@ import poc.diff.JavaDiffFilter
 import poc.diff.parser.DiffParserByUnifiedDiff
 import poc.diff.streamLocator.DiffStreamLocatorFromGit
 import poc.example.Implicits._
+import poc.fromResource
 import poc.jacoco.{JacocoClient, JacocoUtils, MemoryMultiReportOutput}
 import poc.testCase._
 import poc.testCase.detector.TestCaseDetectorByCodeBlock
@@ -28,8 +29,10 @@ import scala.concurrent.duration.Duration
 object ShowcaseSpringBoot extends cask.MainRoutes {
   override def port: Int = 8090
 
-  val jarLocationPath: Path = Path.of(sys.env("aServiceJarLocation"))
-  val classesInputStream: InputStream = utils.chooseClassDirInSpringBootJar(jarLocationPath)
+  val jarLocationPath: Path = Path.of(sys.env.getOrElse("aServiceJarLocation", fromResource("aService-0.0.1-SNAPSHOT.jar").getFile))
+
+  def classesInputStream: InputStream = utils.chooseClassDirInSpringBootJar(jarLocationPath)
+
   val gitTool: GitTool = GitTool(new File("/tmp/show-case-example"), "https://github.com/lust4life/coverage-diff-poc")
   val diffParser = new DiffParserByUnifiedDiff()
   val diffStreamLocatorFromGit = new DiffStreamLocatorFromGit(gitTool)
@@ -49,21 +52,21 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   @memoryFiles("/coverage")
   def staticFileRoutes(): Map[String, ByteArrayOutputStream] = memoryReportOutput.files.toMap
 
-  @cask.post("/export-coverage")
+  @cask.get("/export-coverage")
   def exportCoverage(): String = {
     // merge all test case execution data
-    val (mergedSessionStore, mergedExecutionStore) =
-      testCaseJacocoDataStore.values.fold((new SessionInfoStore, new ExecutionDataStore)) {
-        case ((mergedSession, mergedExecData), (eachSession, eachExecData)) =>
-          mergedSession.accept(eachSession)
-          mergedExecData.accept(eachExecData)
-          (mergedSession, mergedExecData)
-      }
+    val (mergedSessionStore, mergedExecutionStore) = (new SessionInfoStore, new ExecutionDataStore)
+    testCaseJacocoDataStore.values.foreach {
+      case (eachSession, eachExecData) =>
+        eachSession.accept(mergedSessionStore)
+        eachExecData.accept(mergedExecutionStore)
+    }
 
     // git clone code into some directory
     gitTool.ensureRepoCloned()
 
-    val sourceFileLocator = new DirectorySourceFileLocator(gitTool.repoDir, "UTF-8", 2)
+    val sourceDir = Path.of(gitTool.repoDir.getPath, "spring-boot-service-demo/aService/src/main/java/")
+    val sourceFileLocator = new DirectorySourceFileLocator(sourceDir.toFile, "UTF-8", 2)
     val tmpMemoryOutput = new MemoryMultiReportOutput
     JacocoUtils.exportToHtml("whole-coverage",
       tmpMemoryOutput,
@@ -108,20 +111,17 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
 
     val testCaseInfoFromJacoco = new TestCaseInfoFromJacoco()
 
-    var s = ""
     testCaseJacocoDataStore.foreach {
       case (caseId, (_, execData)) =>
         // generate test case info from jacoco coverage and save it into memory db
         val testCaseName = s"test-case-$caseId"
         val bundle = JacocoUtils.analyzeCoverage(testCaseName, jarLocationPath.toString, classesInputStream, execData)
-        s += bundle.getName
         testCaseInfoFromJacoco.generateTestCaseInfo("master", bundle)
           .map(testCaseMemoryStore.save)
           .foreach(Await.result(_, Duration.Inf))
     }
 
-//    upickle.default.write(testCaseMemoryStore.store, 2)
-    s
+    upickle.default.write(testCaseMemoryStore.store, 2)
   }
 
   @cask.get("/show-coverage-changed-info/compare/:base/:target")

@@ -1,6 +1,6 @@
 package poc.example
 
-import java.io.ByteArrayOutputStream
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 import cask.endpoints.QueryParamReader
 import cask.model.{Request, Response}
@@ -21,7 +21,7 @@ class memoryFiles(val path: String,
       val stream = memoryFileMap.get(path)
       val (data, statusCode) =
         if (stream.isDefined) {
-          (stream.get.toByteArray: Response.Data, 200)
+          (new ByteArrayInputStream(stream.get.toByteArray): Response.Data, 200)
         } else {
           ("": Response.Data, 404)
         }
