@@ -5,8 +5,6 @@ import utest._
 import scala.util.Try
 
 object ImplicitsTest extends TestSuite {
-
-
   val tests = Tests {
     "cast should throw when failed" - {
       Try {

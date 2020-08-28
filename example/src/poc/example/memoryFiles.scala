@@ -17,16 +17,14 @@ class memoryFiles(val path: String,
 
   def wrapFunction(ctx: Request, delegate: Delegate) = {
     delegate(Map()).map(memoryFileMap => {
-      val path = ctx.remainingPathSegments.filter(s => s!="." && s!= "..").mkString("/")
-      val relPath = java.nio.file.Paths.get(path)
+      val path = ctx.remainingPathSegments.filter(s => s != "." && s != "..").mkString("/")
       val stream = memoryFileMap.get(path)
-      val (data: Response.Data, statusCode) =
+      val (data, statusCode) =
         if (stream.isDefined) {
-          (stream.get.toByteArray, 200)
+          (stream.get.toByteArray: Response.Data, 200)
         } else {
-          ("", 404)
+          ("": Response.Data, 404)
         }
-
       Response(data, statusCode, headers, Nil)
     })
   }

@@ -1,11 +1,11 @@
 package poc.example
 
-import java.io.{File, InputStream}
+import java.io.{ByteArrayOutputStream, File, InputStream}
 import java.net.Socket
+import java.nio.file.Path
 
 import org.jacoco.core.data.{ExecutionDataStore, SessionInfoStore}
 import org.jacoco.report.DirectorySourceFileLocator
-import poc.Implicits.fromResource
 import poc.codeBlock.CodeBlockGeneratorByFilePath
 import poc.codeBlock.filePathResolver.CodeBlockFilePathResolverByLocalFile
 import poc.codeBlock.javaGenerator.JavaBlockGenerator
@@ -26,8 +26,11 @@ import scala.concurrent.duration.Duration
 
 
 object ShowcaseSpringBoot extends cask.MainRoutes {
-  val jarLocationUrl = fromResource("aService-0.0.1-SNAPSHOT.jar")
-  val gitTool = GitTool(new File("/tmp/show-case-example"), "https://github.com/lust4life/coverage-diff-poc")
+  override def port: Int = 8090
+
+  val jarLocationPath: Path = Path.of(sys.env("aServiceJarLocation"))
+  val classesInputStream: InputStream = utils.chooseClassDirInSpringBootJar(jarLocationPath)
+  val gitTool: GitTool = GitTool(new File("/tmp/show-case-example"), "https://github.com/lust4life/coverage-diff-poc")
   val diffParser = new DiffParserByUnifiedDiff()
   val diffStreamLocatorFromGit = new DiffStreamLocatorFromGit(gitTool)
 
@@ -44,18 +47,17 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   var memoryReportOutput = new MemoryMultiReportOutput
 
   @memoryFiles("/coverage")
-  def staticFileRoutes() = memoryReportOutput.files.toMap
+  def staticFileRoutes(): Map[String, ByteArrayOutputStream] = memoryReportOutput.files.toMap
 
   @cask.post("/export-coverage")
-  def exportCoverage(path: String) = {
+  def exportCoverage(): String = {
     // merge all test case execution data
     val (mergedSessionStore, mergedExecutionStore) =
       testCaseJacocoDataStore.values.fold((new SessionInfoStore, new ExecutionDataStore)) {
-        case ((mergedSession, mergedExecData), (eachSession, eachExecData)) => {
+        case ((mergedSession, mergedExecData), (eachSession, eachExecData)) =>
           mergedSession.accept(eachSession)
           mergedExecData.accept(eachExecData)
           (mergedSession, mergedExecData)
-        }
       }
 
     // git clone code into some directory
@@ -67,8 +69,8 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
       tmpMemoryOutput,
       mergedSessionStore,
       mergedExecutionStore,
-      jarLocationUrl.getPath,
-      jarLocationUrl.openStream(),
+      jarLocationPath.toString,
+      classesInputStream,
       sourceFileLocator
     )
 
@@ -76,46 +78,54 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
     "Done"
   }
 
-  var testCaseJacocoDataStore = Map[Int, (SessionInfoStore, ExecutionDataStore)]()
+  var testCaseJacocoDataStore: Map[Int, (SessionInfoStore, ExecutionDataStore)] = Map[Int, (SessionInfoStore, ExecutionDataStore)]()
 
-  @cask.get("/run-test-case-automatically/:host/:port")
-  def runTestCase(host: String, port: Int) = {
+
+  @cask.get("/")
+  def get(): String = {
+    testCaseJacocoDataStore.keys.mkString(",")
+  }
+
+  @cask.get("/run-test-case-automatically/:host/:port/:tcpPort")
+  def runTestCase(host: String, port: Int, tcpPort: Int): String = {
     // grab jacoco data from mock service then generate test case info
 
     val jacocoClient = new JacocoClient(
-      new Socket(host, port)
+      new Socket(host, tcpPort)
     )
     val someServiceUrl = s"http://$host:$port"
 
+    jacocoClient.reset()
+
     val testCaseIds = Seq(1, 2, 3)
     testCaseIds.foreach(caseId => {
-      val res = requests.get(s"http://$someServiceUrl/run-testcase/$caseId")
+      val res = requests.get(s"$someServiceUrl/run-testcase/$caseId")
       if (res.is2xx) {
         val jacocoData = jacocoClient.grabAndReset()
         testCaseJacocoDataStore += (caseId -> jacocoData)
       }
     })
 
-    val jarLocation = jarLocationUrl.getPath
-    val jarFileStream = jarLocationUrl.openStream()
     val testCaseInfoFromJacoco = new TestCaseInfoFromJacoco()
 
+    var s = ""
     testCaseJacocoDataStore.foreach {
-      case (caseId, (_, execData)) => {
+      case (caseId, (_, execData)) =>
         // generate test case info from jacoco coverage and save it into memory db
         val testCaseName = s"test-case-$caseId"
-        val bundle = JacocoUtils.analyzeCoverage(testCaseName, jarLocation, jarFileStream, execData)
+        val bundle = JacocoUtils.analyzeCoverage(testCaseName, jarLocationPath.toString, classesInputStream, execData)
+        s += bundle.getName
         testCaseInfoFromJacoco.generateTestCaseInfo("master", bundle)
           .map(testCaseMemoryStore.save)
           .foreach(Await.result(_, Duration.Inf))
-      }
     }
 
-    upickle.default.write(testCaseMemoryStore.store, 2)
+//    upickle.default.write(testCaseMemoryStore.store, 2)
+    s
   }
 
   @cask.get("/show-coverage-changed-info/compare/:base/:target")
-  def showCoverageChangedInfo(base: String, target: String) = {
+  def showCoverageChangedInfo(base: String, target: String): String = {
     gitTool.ensureRepoCloned()
     gitTool.resetTo(target)
 
