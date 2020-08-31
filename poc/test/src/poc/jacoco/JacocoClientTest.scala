@@ -7,7 +7,7 @@ import utest._
 import poc.Implicits._
 
 object JacocoClientTest extends TestSuite {
-  val port = 20201
+  val port = 20203
 
   val tests = Tests {
     val client = new JacocoClient(

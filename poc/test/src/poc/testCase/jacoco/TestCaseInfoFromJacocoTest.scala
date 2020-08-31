@@ -3,7 +3,7 @@ package poc.testCase.jacoco
 import poc.Implicits.fromResource
 import poc.jacoco.JacocoUtils
 import poc.testCase.{AffectedFile, AffectedMethod, TestCaseInfo}
-import poc.utils
+import poc.test.utils
 import utest._
 
 object TestCaseInfoFromJacocoTest extends TestSuite {
@@ -25,13 +25,13 @@ object TestCaseInfoFromJacocoTest extends TestSuite {
         Some(
           TestCaseInfo(bundleName, sourceCodeVersion, Seq(
             AffectedFile("poc/example/javacode/TestCaseEntry.java", Seq(
-              AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tTestCaseEntry()"),
-              AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tTestCase1()"),
-              AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tDoubleNumIfMoreThan5(int)"),
-              AffectedMethod("poc.example.javacode.TestCaseEntry\t#\tmain(String[])"))),
+              AffectedMethod("poc.example.javacode.TestCaseEntry#TestCaseEntry()"),
+              AffectedMethod("poc.example.javacode.TestCaseEntry#TestCase1()"),
+              AffectedMethod("poc.example.javacode.TestCaseEntry#DoubleNumIfMoreThan5(int)"),
+              AffectedMethod("poc.example.javacode.TestCaseEntry#main(String[])"))),
             AffectedFile("poc/example/javacode/some/inner/folder/SharedLib.java", Seq(
-              AffectedMethod("poc.example.javacode.some.inner.folder.SharedLib\t#\tDoubleNumber(Integer)"),
-              AffectedMethod("poc.example.javacode.some.inner.folder.SharedLib\t#\tCommonLogInfo(Object)"))))))
+              AffectedMethod("poc.example.javacode.some.inner.folder.SharedLib#DoubleNumber(Integer)"),
+              AffectedMethod("poc.example.javacode.some.inner.folder.SharedLib#CommonLogInfo(Object)"))))))
     }
   }
 

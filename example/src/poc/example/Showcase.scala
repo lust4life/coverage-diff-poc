@@ -1,16 +1,19 @@
 package poc.example
 
 import java.io.InputStream
+import java.net.Socket
+import java.nio.file.Path
 
 import poc.example.Implicits._
 import poc.codeBlock.CodeBlockGeneratorByFilePath
 import poc.codeBlock.javaGenerator.JavaBlockGenerator
 import poc.diff.{Changed, JavaDiffFilter}
 import poc.diff.parser.DiffParserByUnifiedDiff
+import poc.fromResource
 import poc.github.GithubRepo
 import poc.github.codeBlock.filePathResolver.CodeBlockFilePathResolverFromGithub
 import poc.github.diff.streamLocator.DiffStreamLocatorFromGithub
-import poc.jacoco.JacocoUtils
+import poc.jacoco.{JacocoClient, JacocoUtils}
 import poc.testCase._
 import poc.testCase.detector.TestCaseDetectorByCodeBlock
 import poc.testCase.jacoco.TestCaseInfoFromJacoco
@@ -38,15 +41,18 @@ object Showcase extends cask.MainRoutes {
 
   @cask.get("/run-test-case/:id")
   def runTestCase(id: Int) = {
-
     // simulate run some test case in mock service
-    val sub = utils.startJacocoAgent()
+    val tcpServerPort = 20202
+    val mockServiceJarLocation = Path.of(fromResource("mockservice.jar").getFile)
+    val sub = utils.startJacocoAgent(mockServiceJarLocation, tcpServerPort)
     sub.stdout.readLine()
     sub.stdin.writeLine(id.toString)
     sub.stdin.flush()
 
     // grab jacoco data from mock service
-    val (_, execData) = utils.jacocoClient.grab()
+    val (_, execData) = new JacocoClient(
+      new Socket("localhost", tcpServerPort)
+    ).grabAndReset()
 
     // generate test case info from jacoco coverage and save it into memory db
     val testCaseInfoFromJacoco = new TestCaseInfoFromJacoco()

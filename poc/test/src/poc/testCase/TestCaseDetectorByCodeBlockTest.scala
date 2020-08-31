@@ -71,8 +71,8 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
 
     "handle changed file" - async {
       val filePath = "a.java"
-      val mockMethod = "a.b.c\t#\tDoSomething(Int,String)"
-      val affectedMethods = Seq(AffectedMethod(mockMethod), AffectedMethod("a.b.c\t#\tanother mockMethod"))
+      val mockMethod = "a.b.c#DoSomething(Int,String)"
+      val affectedMethods = Seq(AffectedMethod(mockMethod), AffectedMethod("a.b.c#another mockMethod"))
       when(mockTestCaseResolver.retrieve(filePath))
         .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", "", Seq(AffectedFile(filePath, affectedMethods))))))
 
@@ -101,8 +101,8 @@ object TestCaseDetectorByCodeBlockTest extends TestSuite {
     "handle rename file" - async {
       val fromFilePath = "a.java"
       val toFilePath = "b.java"
-      val mockMethod = "a.b.c\t#\tDoSomething(Int,String)"
-      val affectedMethods = Seq(AffectedMethod(mockMethod), AffectedMethod("a.b.c\t#\tanother mockMethod"))
+      val mockMethod = "a.b.c#DoSomething(Int,String)"
+      val affectedMethods = Seq(AffectedMethod(mockMethod), AffectedMethod("a.b.c#another mockMethod"))
       when(mockTestCaseResolver.retrieve(fromFilePath))
         .thenReturn(Future.successful(Seq(TestCaseInfo("test case 1", "", Seq(AffectedFile(fromFilePath, affectedMethods))))))
 

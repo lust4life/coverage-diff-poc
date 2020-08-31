@@ -52,7 +52,7 @@ object TestCaseInfoTest extends TestSuite {
     }
 
     "affected method check changed by diff file and code block" - {
-      val a1 = AffectedMethod("a.b.c\t#\tDoSomething(Int,String)")
+      val a1 = AffectedMethod("a.b.c#DoSomething(Int,String)")
       val classCodeBlock = ClassOrInterface("some.file", BlockRange(1, 30), "a.b.c")
       val methodCodeBlock = Method(classCodeBlock, "DoSomething(Int,String)", BlockRange(15, 17))
 

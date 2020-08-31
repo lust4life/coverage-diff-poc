@@ -12,7 +12,7 @@ object CodeBlockTest extends TestSuite {
     "method's id should concat container's qualification" - {
       val m = Method(ClassOrInterface("", dummyRange, "a.b.c"), "Foo M1(Bar)", dummyRange)
       val id = m.id
-      assert(id == "a.b.c\t#\tFoo M1(Bar)")
+      assert(id == "a.b.c#Foo M1(Bar)")
     }
 
     "method's file path should be container's" - {

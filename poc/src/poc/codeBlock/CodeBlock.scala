@@ -29,5 +29,5 @@ final case class Method(container: ClassOrInterface, signature: String, range: B
 }
 
 object CodeBlock {
-  def generateSignatureForMethod(classSignature: String, methodSignature: String) = classSignature + "\t#\t" + methodSignature
+  def generateSignatureForMethod(classSignature: String, methodSignature: String) = classSignature + "#" + methodSignature
 }

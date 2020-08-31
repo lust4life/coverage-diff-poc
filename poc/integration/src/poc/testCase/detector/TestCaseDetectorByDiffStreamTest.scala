@@ -33,20 +33,20 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
         Future.successful(Seq(
           TestCaseInfo("TestCase1", "", Seq(
             AffectedFile(sharedLibPath, Seq(
-              AffectedMethod("com.poc.SharedLib\t#\tDoubleNumber(Integer)"),
-              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(Object)"),
+              AffectedMethod("com.poc.SharedLib#DoubleNumber(Integer)"),
+              AffectedMethod("com.poc.SharedLib#CommonLogInfo(Object)"),
             ))
           )),
           TestCaseInfo("TestCase2", "", Seq(
             AffectedFile(sharedLibPath, Seq(
-              AffectedMethod("com.poc.SharedLib\t#\tUseInnerClass(Object)"),
-              AffectedMethod("com.poc.SharedLib.InnerSharedLib\t#\tIdentity(Object)"),
-              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(Object)"),
+              AffectedMethod("com.poc.SharedLib#UseInnerClass(Object)"),
+              AffectedMethod("com.poc.SharedLib.InnerSharedLib#Identity(Object)"),
+              AffectedMethod("com.poc.SharedLib#CommonLogInfo(Object)"),
             ))
           )),
           TestCaseInfo("TestCase3", "", Seq(
             AffectedFile(sharedLibPath, Seq(
-              AffectedMethod("com.poc.SharedLib\t#\tCommonLogInfo(Object)"),
+              AffectedMethod("com.poc.SharedLib#CommonLogInfo(Object)"),
             ))
           ))
         ))
@@ -55,19 +55,19 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
         Future.successful(Seq(
           TestCaseInfo("TestCase1", "", Seq(
             AffectedFile(testCaseEntryPath, Seq(
-              AffectedMethod("com.poc.TestCaseEntry\t#\tTestCase1()"),
-              AffectedMethod("com.poc.TestCaseEntry\t#\tDoubleNumIfMoreThan5(Integer)"),
+              AffectedMethod("com.poc.TestCaseEntry#TestCase1()"),
+              AffectedMethod("com.poc.TestCaseEntry#DoubleNumIfMoreThan5(Integer)"),
             ))
           )),
           TestCaseInfo("TestCase2", "", Seq(
             AffectedFile(testCaseEntryPath, Seq(
-              AffectedMethod("com.poc.TestCaseEntry\t#\tTestCase2()"),
-              AffectedMethod("com.poc.TestCaseEntry\t#\tDoubleNumIfMoreThan5(Integer)"),
+              AffectedMethod("com.poc.TestCaseEntry#TestCase2()"),
+              AffectedMethod("com.poc.TestCaseEntry#DoubleNumIfMoreThan5(Integer)"),
             ))
           )),
           TestCaseInfo("TestCase3", "", Seq(
             AffectedFile(testCaseEntryPath, Seq(
-              AffectedMethod("com.poc.TestCaseEntry\t#\tTestCase3()"),
+              AffectedMethod("com.poc.TestCaseEntry#TestCase3()"),
             ))
           )),
         ))
@@ -89,7 +89,7 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
       testCaseChangedInfos ==> Seq(
         TestCaseChangedInfo("TestCase1", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib	#	DoubleNumber(Integer)")))))
+            "com.poc.SharedLib#DoubleNumber(Integer)")))))
     }
 
     "change testcase 2" - async {
@@ -103,7 +103,7 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
       testCaseChangedInfos ==> Seq(
         TestCaseChangedInfo("TestCase2", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib.InnerSharedLib\t#\tIdentity(Object)")))))
+            "com.poc.SharedLib.InnerSharedLib#Identity(Object)")))))
     }
 
     "change testcase 1 and 2" - async {
@@ -117,11 +117,11 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
       testCaseChangedInfos.sortBy(_.id) ==> Seq(
         TestCaseChangedInfo("TestCase1", Seq(
           FileChanged("src/main/java/com/poc/TestCaseEntry.java", Seq(
-            "com.poc.TestCaseEntry\t#\tDoubleNumIfMoreThan5(Integer)")))),
+            "com.poc.TestCaseEntry#DoubleNumIfMoreThan5(Integer)")))),
 
         TestCaseChangedInfo("TestCase2", Seq(
           FileChanged("src/main/java/com/poc/TestCaseEntry.java", Seq(
-            "com.poc.TestCaseEntry\t#\tDoubleNumIfMoreThan5(Integer)")))))
+            "com.poc.TestCaseEntry#DoubleNumIfMoreThan5(Integer)")))))
     }
 
     "change testcase 1 and 2 and 3" - async {
@@ -135,15 +135,15 @@ object TestCaseDetectorByDiffStreamTest extends TestSuite {
       testCaseChangedInfos.sortBy(_.id) ==> Seq(
         TestCaseChangedInfo("TestCase1", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib\t#\tCommonLogInfo(Object)")))),
+            "com.poc.SharedLib#CommonLogInfo(Object)")))),
 
         TestCaseChangedInfo("TestCase2", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib\t#\tCommonLogInfo(Object)")))),
+            "com.poc.SharedLib#CommonLogInfo(Object)")))),
 
         TestCaseChangedInfo("TestCase3", Seq(
           FileChanged("src/main/java/com/poc/SharedLib.java", Seq(
-            "com.poc.SharedLib\t#\tCommonLogInfo(Object)")))))
+            "com.poc.SharedLib#CommonLogInfo(Object)")))))
     }
   }
 }

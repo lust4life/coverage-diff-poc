@@ -38,7 +38,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   val diffStreamLocatorFromGit = new DiffStreamLocatorFromGit(gitTool)
 
   val testCaseMemoryStore = new TestCaseMemoryStore()
-  val testCaseResolver = new TestCaseResolverFromMemory("spring-boot-service-demo/aService/", testCaseMemoryStore)
+  val testCaseResolver = new TestCaseResolverFromMemory("spring-boot-service-demo/aService/src/main/java", testCaseMemoryStore)
   val testCaseResolverByDiff = new TestCaseResolverByDiff(testCaseResolver, JavaDiffFilter)
 
   val javaCodeBlockGenerator = new JavaBlockGenerator()
@@ -50,7 +50,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   var memoryReportOutput = new MemoryMultiReportOutput
 
   @memoryFiles("/coverage")
-  def staticFileRoutes(): Map[String, ByteArrayOutputStream] = memoryReportOutput.files.toMap
+  def coverage(): Map[String, ByteArrayOutputStream] = memoryReportOutput.files.toMap
 
   @cask.get("/export-coverage")
   def exportCoverage(): String = {
@@ -82,12 +82,6 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   }
 
   var testCaseJacocoDataStore: Map[Int, (SessionInfoStore, ExecutionDataStore)] = Map[Int, (SessionInfoStore, ExecutionDataStore)]()
-
-
-  @cask.get("/")
-  def get(): String = {
-    testCaseJacocoDataStore.keys.mkString(",")
-  }
 
   @cask.get("/run-test-case-automatically/:host/:port/:tcpPort")
   def runTestCase(host: String, port: Int, tcpPort: Int): String = {

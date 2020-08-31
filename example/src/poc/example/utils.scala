@@ -1,50 +1,41 @@
 package poc.example
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, FileInputStream, InputStream, OutputStream, PipedInputStream, PipedOutputStream}
-import java.net.Socket
-import java.nio.file.{Files, Path}
-import java.util.zip.{ZipFile, ZipOutputStream}
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStream}
+import java.nio.file.Path
+import java.util.jar.{JarFile, JarOutputStream}
 
 import poc.Implicits._
-import poc.jacoco.JacocoClient
 
 import scala.jdk.CollectionConverters.EnumerationHasAsScala
 import scala.util.Using
 
 object utils {
 
-  val port = 20201
-
-  val jacocoClient = new JacocoClient(
-    new Socket("localhost", port)
-  )
-
   val mockServiceUrl = fromResource("mockservice.jar")
 
-  def startJacocoAgent() = {
-    val mockServiceFilePath = mockServiceUrl.getFile
+  def startJacocoAgent(serviceJarPath: Path, tcpServerPort: Int) = {
+    val mockServiceFilePath = serviceJarPath.toString
     val jacocoagentJar = fromResource("jacocoagent.jar").getFile
     val sub =
       os.proc(
         "java",
-        s"-javaagent:$jacocoagentJar=address=*,port=$port,output=tcpserver",
+        s"-javaagent:$jacocoagentJar=address=*,port=$tcpServerPort,output=tcpserver",
         "-jar", mockServiceFilePath).spawn()
     sub
   }
 
   def chooseClassDirInSpringBootJar(jarPath: Path): InputStream = {
     val out = new ByteArrayOutputStream()
-    val tmpZipStream = new ZipOutputStream(out)
-    val classFilePattern = """BOOT-INF/classes/.*\.class""".r
-    Using(new ZipFile(jarPath.toFile)) { zipFile =>
-      zipFile.entries().asScala.foreach { zipEntry =>
-        if (zipEntry.getName.matches("""BOOT-INF/classes/.*\.class""")) {
-          tmpZipStream.putNextEntry(zipEntry)
-          zipFile.getInputStream(zipEntry).transferTo(tmpZipStream)
-          tmpZipStream.closeEntry()
+    val tmpJarStream = new JarOutputStream(out)
+    Using(new JarFile(jarPath.toFile)) { jarFile =>
+      jarFile.entries().asScala.foreach { jarEntry =>
+        if (jarEntry.getName.matches("""BOOT-INF/classes/.*\.class""")) {
+          tmpJarStream.putNextEntry(jarEntry)
+          jarFile.getInputStream(jarEntry).transferTo(tmpJarStream)
+          tmpJarStream.closeEntry()
         }
       }
-      tmpZipStream.close()
+      tmpJarStream.close()
     }
 
     new ByteArrayInputStream(out.toByteArray)
