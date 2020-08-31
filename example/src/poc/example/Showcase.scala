@@ -1,12 +1,14 @@
 package poc.example
 
 import java.io.InputStream
+import java.nio.file.Path
 
 import poc.example.Implicits._
 import poc.codeBlock.CodeBlockGeneratorByFilePath
 import poc.codeBlock.javaGenerator.JavaBlockGenerator
 import poc.diff.{Changed, JavaDiffFilter}
 import poc.diff.parser.DiffParserByUnifiedDiff
+import poc.fromResource
 import poc.github.GithubRepo
 import poc.github.codeBlock.filePathResolver.CodeBlockFilePathResolverFromGithub
 import poc.github.diff.streamLocator.DiffStreamLocatorFromGithub
@@ -40,7 +42,8 @@ object Showcase extends cask.MainRoutes {
   def runTestCase(id: Int) = {
 
     // simulate run some test case in mock service
-    val sub = utils.startJacocoAgent()
+    val mockServiceJarLocation = Path.of(fromResource("mockservice.jar").getFile)
+    val sub = utils.startJacocoAgent(mockServiceJarLocation)
     sub.stdout.readLine()
     sub.stdin.writeLine(id.toString)
     sub.stdin.flush()
