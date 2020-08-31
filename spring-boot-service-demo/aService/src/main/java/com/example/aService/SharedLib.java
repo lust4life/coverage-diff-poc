@@ -22,6 +22,7 @@ public class SharedLib {
      */
     public static class InnerSharedLib {
         public static <T> T Identity(T data) {
+            CommonLogInfo("calling identity method before return");
             return data;
         }
     }
