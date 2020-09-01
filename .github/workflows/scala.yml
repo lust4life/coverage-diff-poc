@@ -22,7 +22,7 @@ jobs:
     - name: Install diff2html cli
       run:  sudo npm i -g diff2html-cli
     - name: Run tests
-      run:  ./mill -i __.__.test
+      run:  ./mill -i poc.__.test
     - name: Generate coverage report
       run:  ./mill -i __.__.scoverage.xmlReport
     - name: Codecov
