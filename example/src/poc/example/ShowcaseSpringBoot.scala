@@ -120,7 +120,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
     upickle.default.write(testCaseMemoryStore.store, 2)
   }
 
-  @cask.get("/show-coverage-changed-info/compare/:base/:target")
+  @cask.get("/show-coverage-changed-info/compare")
   def showCoverageChangedInfo(base: String, target: String): String = {
     gitTool.ensureRepoCloned()
     gitTool.resetTo(target)
