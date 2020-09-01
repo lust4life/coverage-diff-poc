@@ -29,6 +29,8 @@ import scala.concurrent.duration.Duration
 object ShowcaseSpringBoot extends cask.MainRoutes {
   override def port: Int = 8090
 
+  override def host: String = "0.0.0.0"
+
   val jarLocationPath: Path = Path.of(sys.env.getOrElse("aServiceJarLocation", fromResource("aService-0.0.1-SNAPSHOT.jar").getFile))
 
   def classesInputStream: InputStream = utils.chooseClassDirInSpringBootJar(jarLocationPath)

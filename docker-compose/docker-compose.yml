@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  test-case-coverage-detector:
+    image: test-case-coverage-detector
+    build:
+      context: ..
+      dockerfile: ./docker-compose/Dockerfile
+      labels:
+        - "com.show-case-for-coverage.description=TestCase detector api"
+      network: "show-case"
+    depends_on: 
+      - spring-boot-example
+    container_name: show-case.test-case-detector
+    environment: 
+      aServiceJarLocation: /app/aService-0.0.1-SNAPSHOT.jar
+    entrypoint: java -cp /app/out.jar poc.example.ShowcaseSpringBoot
+    ports:
+      - "8090:8090"      
+  spring-boot-example:
+    image: spring-boot-example
+    build:
+      context: ..
+      dockerfile: ./docker-compose/Dockerfile
+      labels:
+        - "com.show-case-for-coverage.description=Mocking some service in spring boot"
+      network: "show-case"
+    container_name: show-case.service-example
+    entrypoint: java "-javaagent:/app/jacocoagent.jar=address=*,port=20201,output=tcpserver,includes=com.example.*" -Djava.security.egd=file:/dev/./urandom -jar /app/aService-0.0.1-SNAPSHOT.jar
+    ports: 
+      - "8080:8080"
+networks: 
+  show-case:
