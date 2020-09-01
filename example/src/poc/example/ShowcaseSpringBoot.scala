@@ -120,6 +120,32 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
     upickle.default.write(testCaseMemoryStore.store, 2)
   }
 
+  @cask.get("/reset/:host/:tcpPort")
+  def reset(host: String, tcpPort: Int) = {
+    val jacocoClient = new JacocoClient(
+      new Socket(host, tcpPort)
+    )
+    jacocoClient.reset()
+  }
+
+  @cask.get("/grab/:host/:tcpPort")
+  def grab(host: String, tcpPort: Int, caseId: Int): String = {
+    val jacocoClient = new JacocoClient(
+      new Socket(host, tcpPort)
+    )
+
+    val testCaseInfoFromJacoco = new TestCaseInfoFromJacoco()
+
+    val (_, execData) = jacocoClient.grabAndReset()
+    val testCaseName = s"test-case-$caseId"
+    val bundle = JacocoUtils.analyzeCoverage(testCaseName, jarLocationPath.toString, classesInputStream, execData)
+    testCaseInfoFromJacoco.generateTestCaseInfo("master", bundle)
+      .map(testCaseMemoryStore.save)
+      .foreach(Await.result(_, Duration.Inf))
+
+    upickle.default.write(testCaseMemoryStore.store, 2)
+  }
+
   @cask.get("/show-coverage-changed-info/compare")
   def showCoverageChangedInfo(base: String, target: String): String = {
     gitTool.ensureRepoCloned()
