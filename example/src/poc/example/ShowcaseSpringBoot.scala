@@ -35,7 +35,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
 
   def classesInputStream: InputStream = utils.chooseClassDirInSpringBootJar(jarLocationPath)
 
-  val gitTool: GitTool = GitTool(new File("/tmp/show-case-example"), "https://github.com/lust4life/coverage-diff-poc")
+  val gitTool: GitTool = GitTool(os.temp.dir(prefix = "show-case-git-dir").toIO, "https://github.com/lust4life/coverage-diff-poc")
   val diffParser = new DiffParserByUnifiedDiff()
   val diffStreamLocatorFromGit = new DiffStreamLocatorFromGit(gitTool)
 

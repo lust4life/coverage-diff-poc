@@ -93,3 +93,10 @@
 
 - mill build for source code
     - http://www.lihaoyi.com/mill/
+
+# using docker-compose
+
+```bash
+# make sure enable buildkit
+COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
+```
