@@ -89,6 +89,8 @@
     }
     ```
    
+   
+
 # other resources
 
 - mill build for source code
@@ -100,3 +102,33 @@
 # make sure enable buildkit
 COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
 ```
+
+# show-case-spring-boot api explanation
+
+- /coverage/index.html
+
+  查看测试覆盖率报告
+  
+- /export-coverage
+
+  将 测试用例基准库 导出成 测试覆盖率报告，以供 `/coverage/index.html` 查看
+  
+- /run-test-case-automatically/:host/:port/:tcpPort
+
+  模拟自动化测试，传入所要测试服务的 host， port 以及 jacoco tcp-server 的 port，具体值参考 docker-compose/docker-compose.yml。 同时将其转化为 测试用例基准库
+  
+- /clear
+
+  清空 测试用例基准库
+  
+- /reset/:host/:tcpPort
+
+  重置所要测试服务的 jacoco 数据，以便进行干净的测试和抓取（grab）
+  
+- /grab/:host/:tcpPort?caseId=some-test-case
+
+  抓取所要测试服务的 jacoco 数据，以便生成 测试用例基准库. caseId 标识该次手动测试用例名称
+  
+- /show-coverage-changed-info/compare?base=branchName&target=branchName
+
+  定位代码修改所影响的 测试用例集, branchName 可以是 分支名，commit 或者 tag

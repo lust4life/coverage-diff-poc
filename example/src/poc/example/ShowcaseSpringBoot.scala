@@ -50,7 +50,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   val testCaseDetector = new TestCaseDetectorByCodeBlock(codeBlockGeneratorByFilePath, testCaseResolverByDiff)
 
   var memoryReportOutput = new MemoryMultiReportOutput
-  var testCaseJacocoDataStore: Map[Int, (SessionInfoStore, ExecutionDataStore)] = Map[Int, (SessionInfoStore, ExecutionDataStore)]()
+  var testCaseJacocoDataStore = Map[String, (SessionInfoStore, ExecutionDataStore)]()
 
   @memoryFiles("/coverage")
   def coverage(): Map[String, ByteArrayOutputStream] = memoryReportOutput.files.toMap
@@ -100,7 +100,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
       val res = requests.get(s"$someServiceUrl/run-testcase/$caseId")
       if (res.is2xx) {
         val jacocoData = jacocoClient.grabAndReset()
-        testCaseJacocoDataStore += (caseId -> jacocoData)
+        testCaseJacocoDataStore += (s"test-case-$caseId" -> jacocoData)
       }
     })
 
@@ -110,17 +110,22 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   }
 
   private def generateTestCaseInfoFromJacoco(testCaseStore: TestCaseStore,
-                                             testCaseJacocoDataStore: Map[Int, (SessionInfoStore, ExecutionDataStore)]) = {
+                                             testCaseJacocoDataStore: Map[String, (SessionInfoStore, ExecutionDataStore)]) = {
     val testCaseInfoFromJacoco = new TestCaseInfoFromJacoco()
 
     testCaseJacocoDataStore.foreach {
       case (caseId, (_, execData)) =>
-        val testCaseName = s"test-case-$caseId"
-        val bundle = JacocoUtils.analyzeCoverage(testCaseName, jarLocationPath.toString, classesInputStream, execData)
+        val bundle = JacocoUtils.analyzeCoverage(caseId, jarLocationPath.toString, classesInputStream, execData)
         testCaseInfoFromJacoco.generateTestCaseInfo("master", bundle)
           .map(testCaseStore.save)
           .foreach(Await.result(_, Duration.Inf))
     }
+  }
+
+  @cask.get("/clear")
+  def clear() = {
+    testCaseJacocoDataStore = Map.empty
+    testCaseMemoryStore.store.clear()
   }
 
   @cask.get("/reset/:host/:tcpPort")
@@ -132,7 +137,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   }
 
   @cask.get("/grab/:host/:tcpPort")
-  def grab(host: String, tcpPort: Int, caseId: Int): String = {
+  def grab(host: String, tcpPort: Int, caseId: String): String = {
     val jacocoClient = new JacocoClient(
       new Socket(host, tcpPort)
     )
