@@ -1,6 +1,6 @@
 package poc.example
 
-import java.io.{ByteArrayOutputStream, File, InputStream}
+import java.io.{ByteArrayOutputStream, InputStream}
 import java.net.Socket
 import java.nio.file.Path
 
@@ -50,6 +50,7 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
   val testCaseDetector = new TestCaseDetectorByCodeBlock(codeBlockGeneratorByFilePath, testCaseResolverByDiff)
 
   var memoryReportOutput = new MemoryMultiReportOutput
+  var testCaseJacocoDataStore: Map[Int, (SessionInfoStore, ExecutionDataStore)] = Map[Int, (SessionInfoStore, ExecutionDataStore)]()
 
   @memoryFiles("/coverage")
   def coverage(): Map[String, ByteArrayOutputStream] = memoryReportOutput.files.toMap
@@ -83,8 +84,6 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
     "Done"
   }
 
-  var testCaseJacocoDataStore: Map[Int, (SessionInfoStore, ExecutionDataStore)] = Map[Int, (SessionInfoStore, ExecutionDataStore)]()
-
   @cask.get("/run-test-case-automatically/:host/:port/:tcpPort")
   def runTestCase(host: String, port: Int, tcpPort: Int): String = {
     // grab jacoco data from mock service then generate test case info
@@ -105,19 +104,23 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
       }
     })
 
+    generateTestCaseInfoFromJacoco(testCaseMemoryStore, testCaseJacocoDataStore)
+
+    upickle.default.write(testCaseMemoryStore.store.values.toSeq, 2)
+  }
+
+  private def generateTestCaseInfoFromJacoco(testCaseStore: TestCaseStore,
+                                             testCaseJacocoDataStore: Map[Int, (SessionInfoStore, ExecutionDataStore)]) = {
     val testCaseInfoFromJacoco = new TestCaseInfoFromJacoco()
 
     testCaseJacocoDataStore.foreach {
       case (caseId, (_, execData)) =>
-        // generate test case info from jacoco coverage and save it into memory db
         val testCaseName = s"test-case-$caseId"
         val bundle = JacocoUtils.analyzeCoverage(testCaseName, jarLocationPath.toString, classesInputStream, execData)
         testCaseInfoFromJacoco.generateTestCaseInfo("master", bundle)
-          .map(testCaseMemoryStore.save)
+          .map(testCaseStore.save)
           .foreach(Await.result(_, Duration.Inf))
     }
-
-    upickle.default.write(testCaseMemoryStore.store, 2)
   }
 
   @cask.get("/reset/:host/:tcpPort")
@@ -134,16 +137,12 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
       new Socket(host, tcpPort)
     )
 
-    val testCaseInfoFromJacoco = new TestCaseInfoFromJacoco()
+    val jacocoData = jacocoClient.grabAndReset()
+    testCaseJacocoDataStore += (caseId -> jacocoData)
 
-    val (_, execData) = jacocoClient.grabAndReset()
-    val testCaseName = s"test-case-$caseId"
-    val bundle = JacocoUtils.analyzeCoverage(testCaseName, jarLocationPath.toString, classesInputStream, execData)
-    testCaseInfoFromJacoco.generateTestCaseInfo("master", bundle)
-      .map(testCaseMemoryStore.save)
-      .foreach(Await.result(_, Duration.Inf))
+    generateTestCaseInfoFromJacoco(testCaseMemoryStore, testCaseJacocoDataStore)
 
-    upickle.default.write(testCaseMemoryStore.store, 2)
+    upickle.default.write(testCaseMemoryStore.store.values.toSeq, 2)
   }
 
   @cask.get("/show-coverage-changed-info/compare")
@@ -152,14 +151,11 @@ object ShowcaseSpringBoot extends cask.MainRoutes {
     gitTool.resetTo(target)
 
     val diffStream = diffStreamLocatorFromGit.getDiffStream(base, target)
-    detectByDiffStream(diffStream)
-  }
-
-  private def detectByDiffStream(diffStream: InputStream) = {
     val diffFiles = diffParser.parse(diffStream)
     val changedInfos = Await.result(testCaseDetector.detect(diffFiles), Duration.Inf)
     upickle.default.write(changedInfos, 2)
   }
+
 
   initialize()
 }

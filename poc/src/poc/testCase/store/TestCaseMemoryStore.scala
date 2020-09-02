@@ -8,9 +8,9 @@ import scala.concurrent.Future
 
 
 class TestCaseMemoryStore extends TestCaseStore {
-  val store = scala.collection.mutable.Buffer.empty[TestCaseInfo]
+  val store = scala.collection.mutable.Map[String, TestCaseInfo]()
 
   override def save(coverageInfo: TestCaseInfo): Future[Unit] = async {
-    store.append(coverageInfo)
+    store.update(s"${coverageInfo.id}-${coverageInfo.sourceCodeVersion}", coverageInfo)
   }
 }

@@ -23,7 +23,7 @@ class TestCaseResolverFromMemory(packageRootPrefix: String, testCaseMemoryStore:
    */
   override def retrieve(filePath: String): Future[Seq[TestCaseInfo]] = {
     val infos =
-      testCaseMemoryStore.store
+      testCaseMemoryStore.store.values
         .filter(testCase => {
           testCase.coverage.exists(_.filePath.equalsIgnoreCase(filePath.stripPrefix(packageRootPrefixWithEnding)))
         })

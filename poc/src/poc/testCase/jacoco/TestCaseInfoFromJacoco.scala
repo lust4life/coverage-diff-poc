@@ -13,6 +13,12 @@ import scala.jdk.CollectionConverters._
 class TestCaseInfoFromJacoco {
   private val javaNames = new JavaNames()
 
+  /**
+   * generate test case info from jacoco coverage
+   * @param sourceCodeVersion which code version does the coverage generate for
+   * @param bundle
+   * @return
+   */
   def generateTestCaseInfo(sourceCodeVersion: String, bundle: IBundleCoverage): Option[TestCaseInfo] = {
     val bundleName = bundle.getName
     val isCovered = bundle.getMethodCounter.isCovered

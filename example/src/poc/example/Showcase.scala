@@ -69,7 +69,7 @@ object Showcase extends cask.MainRoutes {
     sub.stdin.flush()
     sub.close()
 
-    upickle.default.write(testCaseMemoryStore.store, 2)
+    upickle.default.write(testCaseMemoryStore.store.values.toSeq, 2)
   }
 
   @cask.get("/show-coverage-changed-info/pull/:id")
