@@ -1,5 +1,7 @@
 package poc.example.javacode.some.inner.folder;
 
+import java.util.List;
+
 public class SharedLib {
 
     public static <T> T UseInnerClass(T data) {
@@ -22,7 +24,8 @@ public class SharedLib {
      */
     public static class InnerSharedLib {
         public static <T> T Identity(T data) {
-            return data;
+            var db = List.of(data);
+            return db.get(0);
         }
     }
 }
